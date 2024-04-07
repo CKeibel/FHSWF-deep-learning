@@ -45,7 +45,9 @@ class ModelConfig(pydantic.BaseModel):
         return values
 
 
-def load_yaml(path: Path, type: ConfigType) -> GenerationConfig | ModelConfig | TrainingConfig:
+def load_yaml(
+    path: Path, type: ConfigType
+) -> GenerationConfig | ModelConfig | TrainingConfig:
     """
     Loads a YAML file and returns the configuration object.
 
@@ -67,5 +69,3 @@ def load_yaml(path: Path, type: ConfigType) -> GenerationConfig | ModelConfig | 
         return ModelConfig(**config)
     else:
         return TrainingConfig(**config)
-
-
