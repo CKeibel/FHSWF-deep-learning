@@ -1,3 +1,4 @@
 .vscode
 .python-version
 .DS_STORE
+*__pycache__*
