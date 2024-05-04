@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "multimodal-rag"
+version = "0.1.0"
+description = ""
+authors = ["Christopher Keibel <christopher.keibel.90@gmail.com>"]
+readme = "README.md"
+packages = [{include = "multimodal_rag", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10.5"
+transformers = "^4.40.1"
+torch = "2.2"
+pydantic = "^2.7.1"
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cu117"
+priority = "explicit"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
