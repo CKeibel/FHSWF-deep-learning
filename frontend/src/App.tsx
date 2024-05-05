@@ -7,19 +7,21 @@ const App = () => {
 
   const fetchData = async (route: string) => {
     const response = await (
-      await fetch(route)
+      await fetch(route,{
+        headers:{
+            "accepts":"application/json"
+        }
+    })
     ).json();
     setMessage(response.message);
 
   }
 
   useEffect(() => {
-    console.log('Fetching data');
-    fetchData('/')
-    console.log("data", message);
-  })
+    fetchData("http://localhost:8000/");
+  });
 
-  if (message)
+  if (!message)
     return null;
 
   return (
