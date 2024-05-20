@@ -36,3 +36,8 @@ Install project dependencies with **poetry**:
 ```
 poetry install
 ```
+
+## Usage
+Run the appilication as module with `python -m multimodal-rag` or alternatively `python src/multimodal_rag/main.py`.
+
+When starting up, two urls will be available to access the interface. Use the **local url** when you are working on your local machine. If the app runs on a remote cluster (e.g. the fh-swf cluster) use the **public url**.
