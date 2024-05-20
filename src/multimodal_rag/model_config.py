@@ -9,6 +9,6 @@ class ModelConfig(BaseModel):
 
 
 def read_model_config() -> dict[ModelConfig]:
-    with open("./FHSWF-deep-learning/models.yml", "r") as file:
+    with open("./models.yml", "r") as file:
         models = yaml.safe_load(file)
     return {model["name"]: ModelConfig(**model) for model in models["models"]}
