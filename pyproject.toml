@@ -9,7 +9,7 @@ packages = [{include = "multimodal_rag", from = "src"}]
 [tool.poetry.dependencies]
 python = "^3.10.5"
 transformers = "^4.40.1"
-torch = "2.2"
+torch = { version = "2.0.0", source="torch"}
 pydantic = "^2.7.1"
 gradio = "^4.29.0"
 fastapi = "^0.111.0"
