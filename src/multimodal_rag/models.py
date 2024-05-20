@@ -5,7 +5,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizerForCausalLM
 from multimodal_rag.model_config import ModelConfig
 
 
-class CausalLM():
+class CausalLM:
     def __init__(self, config: ModelConfig) -> None:
         self.config = config
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -29,9 +29,9 @@ class CausalLM():
         Returns:
             str: The generated answer.
         """
-        inputs_ids = self.__tokenize(input) # TODO: RAG Template prompt
-        outputs = self.model.generate(inputs_ids) # TODO: generation config
+        inputs_ids = self.__tokenize(input)  # TODO: RAG Template prompt
+        outputs = self.model.generate(inputs_ids)  # TODO: generation config
         # decode only new tokens to string
-        answer = self.tokenizer.decode(outputs[0][len(inputs_ids[0]):])
+        answer = self.tokenizer.decode(outputs[0][len(inputs_ids[0]) :])
         torch.cuda.empty_cache()
         return answer
