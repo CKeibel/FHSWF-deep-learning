@@ -1,27 +1,34 @@
 import gradio as gr
-import time
+from multimodal_rag.models import CausalLM
+from multimodal_rag.model_config import ModelConfig
 
-# Chatbot demo with multimodal input (text, markdown, LaTeX, code blocks, image, audio, & video). Plus shows support for streaming text.
-# https://www.gradio.app/docs/gradio/multimodaltextbox#demos
+model = CausalLM(
+    ModelConfig(
+        name="HuggingFaceH4/zephyr-7b-beta", path="HuggingFaceH4/zephyr-7b-beta"
+    )
+)
 
 
+def response(message: str, history: list[list[str]]) -> tuple[str, list[list[str]]]:
+    answer = model.generate(message)
+    history.append((message, answer))
+    return message, history
 
 
 with gr.Blocks() as frontend:
     # Chat Tab
     with gr.Tab("Chat"):
         chatbot = gr.Chatbot(
-            [],
-            bubble_full_width=True
+            height=500,
         )
-        msg = gr.Textbox(
-            label="User input",
-        )
-    
+        msg = gr.Textbox(label="User input", placeholder="Type your message here")
+        msg.submit(response, inputs=[msg, chatbot], outputs=[msg, chatbot])
+        clear = gr.ClearButton([msg, chatbot])
+
     # Vector store Tab
     with gr.Tab("Storage"):
         pass
-    
+
     # Settings Tab
     with gr.Tab("Settings"):
         with gr.Row():

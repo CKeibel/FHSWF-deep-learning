@@ -1,6 +1,6 @@
 import torch
 import torch.functional as F
-from transformers import AutoModelForCausalLM, AutoTokenizerForCausalLM
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from multimodal_rag.model_config import ModelConfig
 
@@ -9,7 +9,7 @@ class CausalLM:
     def __init__(self, config: ModelConfig) -> None:
         self.config = config
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.tokenizer = AutoTokenizerForCausalLM.from_pretrained(config.path)
+        self.tokenizer = AutoTokenizer.from_pretrained(config.path)
         self.model = AutoModelForCausalLM.from_pretrained(config.path)
 
     def __tokenize(self, text: str) -> torch.Tensor:
