@@ -13,6 +13,7 @@ torch = { version = "2.0.0", source="torch"}
 pydantic = "^2.7.1"
 gradio = "^4.29.0"
 fastapi = "^0.111.0"
+accelerate = "0.30.1"
 
 [[tool.poetry.source]]
 name = "torch"
