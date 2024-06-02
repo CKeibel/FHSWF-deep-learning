@@ -3,7 +3,7 @@
 - System (chat/ rag) prompt
 - Vector Store
 - RAG
-- Compability with multimodal models
+- Compatibility with multimodal models
 
 # Installation
 1. Clone the repsitory: 
