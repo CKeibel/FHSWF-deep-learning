@@ -1,11 +1,18 @@
 import torch
 import torch.functional as F
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from abc import ABC, abstractmethod
 
 from multimodal_rag.model_config import ModelConfig
 
 
-class CausalLM:
+class CausalLMBase(ABC):
+    @abstractmethod
+    def generate(self, input: str, **kwargs) -> str:
+        pass
+
+
+class LanguageModel(CausalLMBase):
     def __init__(self, config: ModelConfig) -> None:
         self.config = config
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -39,3 +46,7 @@ class CausalLM:
         )
         torch.cuda.empty_cache()
         return answer
+
+
+class MultimodalModel(CausalLMBase):
+    pass

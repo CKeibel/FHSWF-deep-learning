@@ -1,11 +1,11 @@
 import gradio as gr
-from multimodal_rag.models import CausalLM
+from multimodal_rag.models import LanguageModel
 from multimodal_rag.model_config import ModelConfig, read_model_config
 
 
 models = read_model_config()
 
-model = CausalLM(
+model = LanguageModel(
     ModelConfig(name=list(models.values())[0].name, path=list(models.values())[0].path)
 )
 
@@ -29,7 +29,7 @@ def response(message: str, history: list[list[str]]) -> tuple[str, list[list[str
 def change_model(key: str) -> None:
     gr.Info("Loading model, this could take a while.")
     global model
-    model = CausalLM(models[key])
+    model = LanguageModel(models[key])
     settings["generation_config"]["pad_token_id"] = model.tokenizer.pad_token_id
     gr.Info(f"Model {key} ready to use!")
 
