@@ -1,5 +1,5 @@
 import gradio as gr
-from multimodal_rag.models import LanguageModel
+from multimodal_rag.llm import LanguageModel
 from multimodal_rag.model_config import ModelConfig, read_model_config
 
 
