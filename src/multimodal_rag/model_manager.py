@@ -1,12 +1,15 @@
 from multimodal_rag.llm import CausalLMBase, LanguageModel, MultimodalModel
 from multimodal_rag.llm_config import CausalLMConfig
 
-class Singleton (type):
+
+class Singleton(type):
     _instances = {}
+
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
+
 
 class ModelManager(metaclass=Singleton):
     def __init__(self, config: CausalLMConfig) -> None:
@@ -15,11 +18,8 @@ class ModelManager(metaclass=Singleton):
 
     @staticmethod
     def load_model(config: CausalLMConfig) -> CausalLMBase:
-        model_types = {
-            "language": LanguageModel,
-            "multimodal": MultimodalModel
-        }
+        model_types = {"language": LanguageModel, "multimodal": MultimodalModel}
         return model_types[config.type](config)
-    
+
     def change_model(self, config: CausalLMConfig) -> None:
         self.model = ModelManager.load_model(config)
