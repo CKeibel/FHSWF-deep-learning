@@ -1,3 +1,0 @@
-models:
-  - {name: "HuggingFaceH4/zephyr-7b-beta", path: "HuggingFaceH4/zephyr-7b-beta"}
-  - {name: "meta-llama/Meta-Llama-3-8B", path: "meta-llama/Meta-Llama-3-8B"}

@@ -4,6 +4,7 @@
 - Vector Store
 - RAG
 - Compatibility with multimodal models
+- HuggingFace login
 
 # Installation
 1. Clone the repsitory: 

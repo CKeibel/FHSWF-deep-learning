@@ -1,36 +1,34 @@
 import gradio as gr
 from multimodal_rag.llm import LanguageModel
-from multimodal_rag.model_config import ModelConfig, read_model_config
+from multimodal_rag.llm_config import CausalLMConfig, read_model_config
+from multimodal_rag.model_manager import ModelManager
 
 
 models = read_model_config()
 
-model = LanguageModel(
-    ModelConfig(name=list(models.values())[0].name, path=list(models.values())[0].path)
-)
+model_manager = ModelManager(list(models.values())[0])
 
 
 settings = {
     "generation_config": {
         "temperature": 1.0,
         "max_new_tokens": 250,
-        "pad_token_id": model.tokenizer.pad_token_id,
+        "pad_token_id": model_manager.model.tokenizer.pad_token_id,
         "no_repeat_ngram_size": 3,
     }
 }
 
 
 def response(message: str, history: list[list[str]]) -> tuple[str, list[list[str]]]:
-    answer = model.generate(message, **settings["generation_config"])
+    answer = model_manager.model.generate(message, **settings["generation_config"])
     history.append((message, answer))
     return message, history
 
 
 def change_model(key: str) -> None:
     gr.Info("Loading model, this could take a while.")
-    global model
-    model = LanguageModel(models[key])
-    settings["generation_config"]["pad_token_id"] = model.tokenizer.pad_token_id
+    model_manager.change_model(models[key])
+    settings["generation_config"]["pad_token_id"] = model_manager.model.tokenizer.pad_token_id
     gr.Info(f"Model {key} ready to use!")
 
 
