@@ -1,7 +1,6 @@
 from contextlib import contextmanager
 import gradio as gr
-from multimodal_rag.llm import LanguageModel
-from multimodal_rag.llm_config import CausalLMConfig, read_model_config
+from multimodal_rag.llm_config import read_model_config
 from multimodal_rag.model_manager import ModelManager
 
 

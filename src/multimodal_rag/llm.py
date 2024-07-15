@@ -1,5 +1,4 @@
 import torch
-import torch.functional as F
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from abc import ABC, abstractmethod
 

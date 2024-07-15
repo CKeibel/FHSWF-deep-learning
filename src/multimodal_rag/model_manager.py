@@ -1,5 +1,9 @@
 from multimodal_rag.llm import CausalLMBase, LanguageModel, MultimodalModel
 from multimodal_rag.llm_config import CausalLMConfig
+import huggingface_hub
+from dotenv import load_dotenv
+import os
+from loguru import logger
 
 
 class Singleton(type):
@@ -13,6 +17,7 @@ class Singleton(type):
 
 class ModelManager(metaclass=Singleton):
     def __init__(self, config: CausalLMConfig) -> None:
+        ModelManager.hf_login()
         self.config = config
         self.model = ModelManager.load_model(config)
 
@@ -23,3 +28,17 @@ class ModelManager(metaclass=Singleton):
 
     def change_model(self, config: CausalLMConfig) -> None:
         self.model = ModelManager.load_model(config)
+
+    @staticmethod
+    def hf_login(secret: str | None = None) -> None:
+        if secret is None:
+            load_dotenv()
+            secret = os.getenv("HUGGINGFACE_TOKEN")
+
+        if secret:
+            huggingface_hub.login(secret)
+            logger.info("Logged in to Hugging Face.")
+        else:
+            logger.warning(
+                "No Hugging Face token found. Please set the HUGGINGFACE_TOKEN environment variable."
+            )
