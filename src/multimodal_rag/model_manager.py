@@ -14,7 +14,7 @@ class Singleton(type):
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
 
-
+# TODO: Implement ModelManager as factory instead of singleton
 class ModelManager(metaclass=Singleton):
     def __init__(self, config: CausalLMConfig) -> None:
         ModelManager.hf_login()

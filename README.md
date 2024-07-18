@@ -4,7 +4,9 @@
 - Vector Store
 - RAG
 - Compatibility with multimodal models
-- HuggingFace login
+- HuggingFace login (needs to be outsourced)
+- Implement ModelManager as LLMFactory
+- Implement Retriever Factory
 
 # Installation
 1. Clone the repsitory: 
