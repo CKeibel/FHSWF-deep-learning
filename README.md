@@ -7,6 +7,7 @@
 - HuggingFace login (needs to be outsourced)
 - Implement ModelManager as LLMFactory
 - Implement Retriever Factory
+- Implement some File manager and Chunking manager (abstract)
 
 # Installation
 1. Clone the repsitory: 
