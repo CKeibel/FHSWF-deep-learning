@@ -8,7 +8,7 @@
 - Implement ModelManager as LLMFactory
 - Implement Retriever Factory
 - Implement some File manager and Chunking manager (abstract)
-- split frontend into different files (per tab) and implement belonging service (to connect to "backend"
+- split frontend into different files (per tab) and implement belonging service (to connect to "backend")
 
 # Installation
 1. Clone the repsitory: 
