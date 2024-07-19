@@ -2,6 +2,12 @@ from pydantic import BaseModel
 import yaml
 
 
+class RetrieverConfig(BaseModel):
+    name: str
+    path: str
+    type: str = "bert"
+
+
 class CausalLMConfig(BaseModel):
     name: str
     path: str

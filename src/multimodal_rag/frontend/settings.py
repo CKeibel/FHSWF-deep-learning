@@ -4,13 +4,14 @@ from contextlib import contextmanager
 
 class SettingsService:
     settings = {
-    "generation_config": {
-        "temperature": 1.0,
-        "max_new_tokens": 250,
-        "pad_token_id": "<PAD>", # TODO: set the pad token id
-        "no_repeat_ngram_size": 3,
+        "generation_config": {
+            "temperature": 1.0,
+            "max_new_tokens": 250,
+            "pad_token_id": "<PAD>",  # TODO: set the pad token id
+            "no_repeat_ngram_size": 3,
+        }
     }
-}
+
     @staticmethod
     def change_model(model_choice):
         pass
@@ -26,8 +27,8 @@ def settings_tab():
         gr.Markdown("# Model selection")
         with gr.Row():
             model_choice = gr.Dropdown(
-                choices=[], # Todo: set the choices (models)
-                value=[], # Todo: set the default value
+                choices=[],  # Todo: set the choices (models)
+                value=[],  # Todo: set the default value
                 label="Model",
             )
             btn = gr.Button("Select")
@@ -54,7 +55,9 @@ def settings_tab():
                 maximum=15,
                 step=1.0,
                 label="No repeat n-gram size",
-                value=SettingsService.settings["generation_config"]["no_repeat_ngram_size"],
+                value=SettingsService.settings["generation_config"][
+                    "no_repeat_ngram_size"
+                ],
             )
             btn = gr.Button("Save")
             btn.click(

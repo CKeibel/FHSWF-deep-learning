@@ -2,7 +2,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from abc import ABC, abstractmethod
 
-from multimodal_rag.llm_config import CausalLMConfig
+from multimodal_rag.models.config import CausalLMConfig
 
 
 class CausalLMBase(ABC):

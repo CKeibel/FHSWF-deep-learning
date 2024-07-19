@@ -1,5 +1,9 @@
-from multimodal_rag.llm import CausalLMBase, LanguageModel, MultimodalModel
-from multimodal_rag.llm_config import CausalLMConfig
+from multimodal_rag.models.causal_model import (
+    CausalLMBase,
+    LanguageModel,
+    MultimodalModel,
+)
+from multimodal_rag.models.config import CausalLMConfig
 import huggingface_hub
 from dotenv import load_dotenv
 import os
@@ -14,12 +18,12 @@ class Singleton(type):
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
 
-# TODO: Implement ModelManager as factory instead of singleton
-class ModelManager(metaclass=Singleton):
+
+class ModelService(metaclass=Singleton):
     def __init__(self, config: CausalLMConfig) -> None:
-        ModelManager.hf_login()
+        ModelService.hf_login()
         self.config = config
-        self.model = ModelManager.load_model(config)
+        self.model = ModelService.load_model(config)
 
     @staticmethod
     def load_model(config: CausalLMConfig) -> CausalLMBase:
@@ -27,7 +31,7 @@ class ModelManager(metaclass=Singleton):
         return model_types[config.type](config)
 
     def change_model(self, config: CausalLMConfig) -> None:
-        self.model = ModelManager.load_model(config)
+        self.model = ModelService.load_model(config)
 
     @staticmethod
     def hf_login(secret: str | None = None) -> None:
