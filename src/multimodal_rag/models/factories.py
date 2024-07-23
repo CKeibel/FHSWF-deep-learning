@@ -7,12 +7,12 @@ from multimodal_rag.models.config import CausalLMConfig, RetrieverConfig
 from multimodal_rag.models.retriever_model import RetrieverBase, BertRetriever
 
 
-class RerieverFactory:
+class RetrieverFactory:
     model_types = {"Bert": BertRetriever}  # TODO: Add others,
 
     @staticmethod
     def get_model(config: RetrieverConfig) -> RetrieverBase:
-        return RerieverFactory.model_types[config.type](config)
+        return RetrieverFactory.model_types[config.type](config)
 
 
 class CausalLMFactory:
