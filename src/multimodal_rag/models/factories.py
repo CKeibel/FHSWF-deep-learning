@@ -8,7 +8,7 @@ from multimodal_rag.models.retriever_model import RetrieverBase, BertRetriever
 
 
 class RetrieverFactory:
-    model_types = {"Bert": BertRetriever}  # TODO: Add others,
+    model_types = {"bert": BertRetriever}  # TODO: Add others,
 
     @staticmethod
     def get_model(config: RetrieverConfig) -> RetrieverBase:
