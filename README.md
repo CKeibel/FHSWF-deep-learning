@@ -1,4 +1,4 @@
-# Multimodal RAG
+# Multimodal (Decoder) RAG
 ## Todos
 - System (chat/ rag) prompt
 - Vector Store
