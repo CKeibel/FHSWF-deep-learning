@@ -1,4 +1,4 @@
-from multimodal_rag.file.file_processor import FileProcessor
+from multimodal_rag.file.file_processor import FileProcessor, UnstructuredIOFileProcessor
 
 class FileService:
     def __init__(self, file_processor: FileProcessor) -> None:
@@ -6,3 +6,5 @@ class FileService:
     
     def process_files(self, files) -> None:
         self.file_processor.process(files)
+
+file_upload_service = FileService(UnstructuredIOFileProcessor)
