@@ -2,7 +2,7 @@ from contextlib import contextmanager
 import gradio as gr
 from multimodal_rag.frontend.chat import chat_tab
 from multimodal_rag.frontend.settings import settings_tab
-from multimodal_rag.frontend.vector_store import vector_store_tab
+from multimodal_rag.frontend.file_upload import file_upload_tab
 
 
 @contextmanager
@@ -13,7 +13,7 @@ def gradio_frontend():
             pass
 
         # Vector store Tab
-        with vector_store_tab():
+        with file_upload_tab():
             pass
 
         # Settings Tab
