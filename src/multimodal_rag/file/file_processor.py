@@ -25,7 +25,7 @@ class UnstructuredIOFileProcessor(FileProcessor):
             except Exception as e:
                 logger.error(f"Error file not readable documents: {e}")
                 continue
-            
+
             # Standardize document
             UnstructuredIOFileProcessor.__standardize_documents(file_path)
 
@@ -52,19 +52,22 @@ class UnstructuredIOFileProcessor(FileProcessor):
                 elements = UnstructuredIOFileProcessor.__default_partition(file_path)
                 return elements
             return elements
-        
+
         # Default partitioning method
         elements = UnstructuredIOFileProcessor.__default_partition(file_path)
-            
+
     @staticmethod
     def __default_partition(file_path: Path) -> list[Element]:
         try:
             elements = partition(file_path)
         except Exception as e:
-            logger.error(f"Error partitioning document ({file_path.name}) with default method: {e}")
+            logger.error(
+                f"Error partitioning document ({file_path.name}) with default method: {e}"
+            )
             return []
-        
+
         return elements
+
 
 class PyPDFFileProcessor(FileProcessor):
     @staticmethod
