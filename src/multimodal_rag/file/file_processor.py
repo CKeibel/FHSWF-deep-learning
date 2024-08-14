@@ -12,33 +12,28 @@ from unstructured.documents.elements import Element
 class FileProcessor(ABC):
     @staticmethod
     @abstractmethod
-    def process(filess) -> None:  # TODO
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def chunk() -> None:  # TODO
+    def process(files: list[NamedString]) -> list[str]:
         pass
 
 
 class UnstructuredIOFileProcessor(FileProcessor):
     @staticmethod
-    def process(files: list[NamedString]) -> None:  # TODO
-        for file in files:
+    def process(file_paths: list[NamedString]) -> list[str]:
+        for p in file_paths:
             try:
-                file_path = Path(file)
+                file_path = Path(p)
             except Exception as e:
                 logger.error(f"Error file not readable documents: {e}")
                 continue
             
-            # Standardize documents
+            # Standardize document
             UnstructuredIOFileProcessor.__standardize_documents(file_path)
 
-            # Process documents
-            UnstructuredIOFileProcessor.process(file)
+            # Chunk document
+            chunks = UnstructuredIOFileProcessor.__chunk()
 
     @staticmethod
-    def chunk() -> None:  # TODO
+    def __chunk(elements: list[Element]) -> list[str]:  # TODO
         pass
 
     @staticmethod
@@ -73,9 +68,5 @@ class UnstructuredIOFileProcessor(FileProcessor):
 
 class PyPDFFileProcessor(FileProcessor):
     @staticmethod
-    def process() -> None:  # TODO
-        pass
-
-    @staticmethod
-    def chunk() -> None:  # TODO
+    def process(files: list[NamedString]) -> list[str]:  # TODO
         pass
