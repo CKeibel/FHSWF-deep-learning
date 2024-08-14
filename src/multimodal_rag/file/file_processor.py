@@ -27,10 +27,10 @@ class UnstructuredIOFileProcessor(FileProcessor):
                 continue
 
             # Standardize document
-            UnstructuredIOFileProcessor.__standardize_documents(file_path)
+            elements = UnstructuredIOFileProcessor.__standardize_documents(file_path)
 
             # Chunk document
-            chunks = UnstructuredIOFileProcessor.__chunk()
+            chunks = UnstructuredIOFileProcessor.__chunk(elements)
 
     @staticmethod
     def __chunk(elements: list[Element]) -> list[str]:  # TODO
@@ -46,11 +46,20 @@ class UnstructuredIOFileProcessor(FileProcessor):
         if file_extension == FileExtensions.PDF:
             try:
                 elements = partition_pdf(file_path, strategy="hi_res")
+
             except Exception as e:
-                logger.error(f"Error partitioning PDF: {e}")
-                logger.info("Attempting to partition document using default method.")
-                elements = UnstructuredIOFileProcessor.__default_partition(file_path)
-                return elements
+                try:
+                    elements = partition_pdf(file_path)
+                    logger.error(f"Error partitioning PDF in high resolution: {e}")
+                    logger.info("Attempting to partition PDF without high resolution.")
+                except Exception as e:
+                    logger.error(f"Error partitioning PDF: {e}")
+                    logger.info(
+                        "Attempting to partition document using default method."
+                    )
+                    elements = UnstructuredIOFileProcessor.__default_partition(
+                        file_path
+                    )
             return elements
 
         # Default partitioning method
