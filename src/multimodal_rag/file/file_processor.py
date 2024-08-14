@@ -4,6 +4,9 @@ from pathlib import Path
 from gradio.utils import NamedString
 from loguru import logger
 from multimodal_rag.enums.file_extentions import FileExtensions
+from unstructured.partition.pdf import partition_pdf
+from unstructured.partition.auto import partition
+from unstructured.documents.elements import Element
 
 
 class FileProcessor(ABC):
@@ -39,16 +42,34 @@ class UnstructuredIOFileProcessor(FileProcessor):
         pass
 
     @staticmethod
-    def __standardize_documents(file_path: Path) -> None:
-        with open(file_path, "rb") as f:
-            pass
-
+    def __standardize_documents(file_path: Path) -> list[Element]:
         # Get file extension (MIME type)
         file_extension = file_path.suffix
 
-        if file_extension == FileExtensions.PDF:
-            pass        
+        logger.info(f"Partitioning document: {file_path.name}")
 
+        if file_extension == FileExtensions.PDF:
+            try:
+                elements = partition_pdf(file_path)
+            except Exception as e:
+                logger.error(f"Error partitioning PDF: {e}")
+                logger.info("Attempting to partition document using default method.")
+                elements = UnstructuredIOFileProcessor.__default_partition(file_path)
+                return elements
+            return elements
+        
+        # Default partitioning method
+        elements = UnstructuredIOFileProcessor.__default_partition(file_path)
+            
+    @staticmethod
+    def __default_partition(file_path: Path) -> list[Element]:
+        try:
+            elements = partition(file_path)
+        except Exception as e:
+            logger.error(f"Error partitioning document ({file_path.name}) with default method: {e}")
+            return []
+        
+        return elements
 
 class PyPDFFileProcessor(FileProcessor):
     @staticmethod
