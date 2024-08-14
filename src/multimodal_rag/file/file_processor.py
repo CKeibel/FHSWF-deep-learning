@@ -45,7 +45,7 @@ class UnstructuredIOFileProcessor(FileProcessor):
 
         if file_extension == FileExtensions.PDF:
             try:
-                elements = partition_pdf(file_path)
+                elements = partition_pdf(file_path, strategy="hi_res")
             except Exception as e:
                 logger.error(f"Error partitioning PDF: {e}")
                 logger.info("Attempting to partition document using default method.")
