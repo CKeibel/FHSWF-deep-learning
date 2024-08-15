@@ -4,11 +4,18 @@ from multimodal_rag.models.causal_model import (
     MultimodalModel,
 )
 from multimodal_rag.models.config import CausalLMConfig, RetrieverConfig
-from multimodal_rag.models.retriever_model import RetrieverBase, BertRetriever
+from multimodal_rag.models.retriever_model import (
+    RetrieverBase,
+    DenseRetriever,
+    SparseRetriever,
+)
 
 
 class RetrieverFactory:
-    model_types = {"bert": BertRetriever}  # TODO: Add others,
+    model_types = {
+        "dense": DenseRetriever,
+        "sparse": SparseRetriever,
+    }
 
     @staticmethod
     def get_model(config: RetrieverConfig) -> RetrieverBase:
