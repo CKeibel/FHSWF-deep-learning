@@ -19,11 +19,14 @@ class FileProcessor(ABC):
 class UnstructuredIOFileProcessor(FileProcessor):
     @staticmethod
     def process(file_paths: list[NamedString]) -> list[str]:
-        for p in file_paths:
+        for i, p in enumerate(file_paths):
             try:
                 file_path = Path(p)
+                logger.info(
+                    f"{i + 1}/{len(file_paths)}: Processing document: {file_path.name}"
+                )
             except Exception as e:
-                logger.error(f"Error file not readable documents: {e}")
+                logger.error(f"Error file {p} not readable:\n{e}")
                 continue
 
             # Standardize document
@@ -41,15 +44,16 @@ class UnstructuredIOFileProcessor(FileProcessor):
         # Get file extension (MIME type)
         file_extension = file_path.suffix
 
-        logger.info(f"Partitioning document: {file_path.name}")
-
         if file_extension == FileExtensions.PDF:
             try:
-                elements = partition_pdf(file_path, strategy="hi_res")
+                elements = partition_pdf(file_path, strategy="fast")
 
             except Exception as e:
                 try:
-                    elements = partition_pdf(file_path)
+                    elements = UnstructuredIOFileProcessor.__default_partition(
+                        file_path
+                    )
+                    # elements = partition_pdf(file_path)
                     logger.error(f"Error partitioning PDF in high resolution: {e}")
                     logger.info("Attempting to partition PDF without high resolution.")
                 except Exception as e:
@@ -60,6 +64,7 @@ class UnstructuredIOFileProcessor(FileProcessor):
                     elements = UnstructuredIOFileProcessor.__default_partition(
                         file_path
                     )
+            logger.info(f"Finished processing document: {file_path.name}")
             return elements
 
         # Default partitioning method
