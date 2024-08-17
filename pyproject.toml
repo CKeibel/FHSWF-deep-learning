@@ -16,14 +16,11 @@ fastapi = "^0.111.0"
 accelerate = "0.30.1"
 loguru = "^0.7.2"
 unstructured = {extras = ["all-docs"], version = "^0.15.0"}
+pillow = "^10.2.0"
 
 [[tool.poetry.source]]
 name = "torch"
 url = "https://download.pytorch.org/whl/cu117"
-
-[[tool.poetry.source]]
-name = "pypi"
-url = "https://pypi.org/simple"
 
 [build-system]
 requires = ["poetry-core"]
