@@ -11,31 +11,31 @@
 - split frontend into different files (per tab) and implement belonging service (to connect to "backend")
 
 # Installation
-1. Clone the repsitory: 
+1. Clone the repsitory:
 
 ```
 git clone git@github.com:CKeibel/FHSWF-deep-learning.git
-``` 
+```
 
-2. Checkout directory:  
+2. Checkout directory:
 ```
 cd FHSWF-deep-learning
 ```
 
 ### Installing with pip
 
-1. Create a virtual environment:  
+1. Create a virtual environment:
 ```
 python -m venv .venv
 ```
 
-2. Activate the newly create virtual env named "venv":  
+2. Activate the newly create virtual env named "venv":
 ```
 source .venv/bin/activate
 ```
-Now `(.venv)` should be displayed in front of your command prompt.  
+Now `(.venv)` should be displayed in front of your command prompt.
 
-3. Install project dependencies with **pip**:  
+3. Install project dependencies with **pip**:
 
 ```
 python -m pip install -e .
@@ -43,7 +43,7 @@ python -m pip install -e .
 
 ### Poetry
 
-Install project dependencies with **poetry**:  
+Install project dependencies with **poetry**:
 ```
 poetry install
 ```
@@ -53,7 +53,7 @@ Run the appilication as module with `python -m multimodal-rag` or alternatively 
 
 When starting up, two urls will be available to access the interface. Use the **local url** when you are working on your local machine. If the app runs on a remote cluster (e.g. the fh-swf cluster) use the **public url**.
 
-**IMPORTANT**:  
+**IMPORTANT**:
 When you start the app on the *fh-swf cluster* make sure that your “current working directory” is set correctly in *vscode*. This is absolutely necessary to read the `models.yml` when starting the app.
 ```
 # launch.json
@@ -72,4 +72,18 @@ When you start the app on the *fh-swf cluster* make sure that your “current wo
         }
     ]
 }
+```
+
+# Dev
+## pre-commit
+Install `pre-commit`
+```
+pip install pre-commit
+```
+
+Install *pre-commit hooks*
+```
+pre-commit install
+-------------------
+>> pre-commit installed at .git/hooks/pre_commit
 ```
