@@ -43,6 +43,11 @@ python -m pip install -e .
 
 ### Poetry
 
+Install **poetry**
+```
+pip install poetry
+```
+
 Install project dependencies with **poetry**:
 ```
 poetry install
@@ -81,7 +86,7 @@ Install `pre-commit`
 pip install pre-commit
 ```
 
-Install *pre-commit hooks*
+Install **pre-commit hooks**
 ```
 pre-commit install
 -------------------
