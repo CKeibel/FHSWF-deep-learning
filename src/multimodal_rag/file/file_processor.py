@@ -1,89 +1,46 @@
 # Strategy pattern
 from abc import ABC, abstractmethod
 from pathlib import Path
-from gradio.utils import NamedString
 from loguru import logger
-from multimodal_rag.enums.file_extentions import FileExtensions
-from unstructured.partition.pdf import partition_pdf
-from unstructured.partition.auto import partition
-from unstructured.documents.elements import Element
+from multimodal_rag.schemas.files import ExtractedFileContent
+import pymupdf
+from pymupdf import Document
+from PIL import Image
+import io
 
 
 class FileProcessor(ABC):
     @staticmethod
     @abstractmethod
-    def process(files: list[NamedString]) -> list[str]:
+    def extract_content(file: Path) -> ExtractedFileContent:
         pass
 
 
-class UnstructuredIOFileProcessor(FileProcessor):
+class PdfProcessor(FileProcessor):
     @staticmethod
-    def process(file_paths: list[NamedString]) -> list[str]:
-        for i, p in enumerate(file_paths):
-            try:
-                file_path = Path(p)
-                logger.info(
-                    f"{i + 1}/{len(file_paths)}: Processing document: {file_path.name}"
-                )
-            except Exception as e:
-                logger.error(f"Error file {p} not readable:\n{e}")
-                continue
+    def extract_content(file: Path) -> ExtractedFileContent:
+        text: str = str()
+        images: list[Image.Image] = list()
 
-            # Standardize document
-            elements = UnstructuredIOFileProcessor.__standardize_documents(file_path)
+        document: Document = pymupdf.open(file)
 
-            # Chunk document
-            chunks = UnstructuredIOFileProcessor.__chunk(elements)
-
-    @staticmethod
-    def __chunk(elements: list[Element]) -> list[str]:  # TODO
-        pass
-
-    @staticmethod
-    def __standardize_documents(file_path: Path) -> list[Element]:
-        # Get file extension (MIME type)
-        file_extension = file_path.suffix
-
-        if file_extension == FileExtensions.PDF:
-            try:
-                elements = partition_pdf(file_path, strategy="fast")
-
-            except Exception as e:
-                try:
-                    elements = UnstructuredIOFileProcessor.__default_partition(
-                        file_path
-                    )
-                    # elements = partition_pdf(file_path)
-                    logger.error(f"Error partitioning PDF in high resolution: {e}")
-                    logger.info("Attempting to partition PDF without high resolution.")
-                except Exception as e:
-                    logger.error(f"Error partitioning PDF: {e}")
-                    logger.info(
-                        "Attempting to partition document using default method."
-                    )
-                    elements = UnstructuredIOFileProcessor.__default_partition(
-                        file_path
-                    )
-            logger.info(f"Finished processing document: {file_path.name}")
-            return elements
-
-        # Default partitioning method
-        elements = UnstructuredIOFileProcessor.__default_partition(file_path)
-
-    @staticmethod
-    def __default_partition(file_path: Path) -> list[Element]:
-        try:
-            elements = partition(file_path)
-        except Exception as e:
-            logger.error(
-                f"Error partitioning document ({file_path.name}) with default method: {e}"
+        for page in document:
+            # extracting text
+            page_text = (
+                page.get_text()
+                .encode("utf8")
+                .decode("utf-8", errors="replace")
+                .replace("\n", " ")
             )
-            return []
+            text += page_text
 
-        return elements
+            # extracting images
+            image_list = page.get_images()
+            for img in image_list:
+                xref = img[0]
+                base_image = document.extract_image(xref)
+                image_bytes = base_image["image"]
+                images.append(Image.open(io.BytesIO(image_bytes)))
 
-
-class PyPDFFileProcessor(FileProcessor):
-    @staticmethod
-    def process(files: list[NamedString]) -> list[str]:  # TODO
-        pass
+        logger.info(f"Finished processing document: {file.name}")
+        return ExtractedFileContent(text=text, images=images)
