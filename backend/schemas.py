@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 
 class ExtractedFileContent(BaseModel):
+    name: str
     text: str
     images: list
 

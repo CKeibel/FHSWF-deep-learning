@@ -23,7 +23,7 @@ class PdfExtractor(ExtractorBase):
         images: list[Image.Image] = list()
 
         document: Document = pymupdf.open(file)
-
+        logger.info("Extracting content...")
         for page in document:
             # extracting text
             page_text = (
@@ -42,5 +42,5 @@ class PdfExtractor(ExtractorBase):
                 image_bytes = base_image["image"]
                 images.append(Image.open(io.BytesIO(image_bytes)))
 
-        logger.info(f"Finished processing document: {file.name}")
-        return ExtractedFileContent(text=text, images=images)
+        logger.info("Finished content extraction.")
+        return ExtractedFileContent(name=file.name, text=text, images=images)
