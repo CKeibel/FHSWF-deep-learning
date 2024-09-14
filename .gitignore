@@ -3,3 +3,6 @@
 .vscode
 .venv
 .python-version
+
+# Ignore dynaconf secret files
+.secrets.*

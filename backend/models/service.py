@@ -1,13 +1,12 @@
-from multimodal_rag.models.causal_model import (
+from backend.models.causal_model import (
     CausalLMBase,
     LanguageModel,
     MultimodalModel,
 )
-from multimodal_rag.models.config import CausalLMConfig
+from backend.models.config import CausalLMConfig
 import huggingface_hub
-from dotenv import load_dotenv
-import os
 from loguru import logger
+from dynaconf import settings
 
 
 class Singleton(type):
@@ -36,8 +35,7 @@ class ModelService(metaclass=Singleton):
     @staticmethod
     def hf_login(secret: str | None = None) -> None:
         if secret is None:
-            load_dotenv()
-            secret = os.getenv("HUGGINGFACE_TOKEN")
+            secret = settings.HF_SECRET
 
         if secret:
             huggingface_hub.login(secret)
