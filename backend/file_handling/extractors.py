@@ -2,21 +2,21 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 from loguru import logger
-from multimodal_rag.schemas.files import ExtractedFileContent
+from backend.schemas import ExtractedFileContent
 import pymupdf
 from pymupdf import Document
 from PIL import Image
 import io
 
 
-class FileProcessor(ABC):
+class ExtractorBase(ABC):
     @staticmethod
     @abstractmethod
     def extract_content(file: Path) -> ExtractedFileContent:
         pass
 
 
-class PdfProcessor(FileProcessor):
+class PdfExtractor(ExtractorBase):
     @staticmethod
     def extract_content(file: Path) -> ExtractedFileContent:
         text: str = str()

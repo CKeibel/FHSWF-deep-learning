@@ -1,4 +1,4 @@
-from multimodal_rag.services.file_service import FileService
+from backend.file_handling.service import FileService
 import gradio as gr
 from contextlib import contextmanager
 

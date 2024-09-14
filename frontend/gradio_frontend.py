@@ -1,8 +1,8 @@
 from contextlib import contextmanager
 import gradio as gr
-from multimodal_rag.frontend.chat import chat_tab
-from multimodal_rag.frontend.settings import settings_tab
-from multimodal_rag.frontend.file_upload import file_upload_tab
+from frontend.chat import chat_tab
+from frontend.settings import settings_tab
+from frontend.file_upload import file_upload_tab
 
 
 @contextmanager

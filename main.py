@@ -1,4 +1,4 @@
-from multimodal_rag.frontend.gradio_frontend import gradio_frontend
+from frontend.gradio_frontend import gradio_frontend
 
 
 def main() -> None:

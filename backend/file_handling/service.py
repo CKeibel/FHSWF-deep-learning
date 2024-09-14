@@ -1,6 +1,6 @@
-from multimodal_rag.file.file_processor import PdfProcessor
-from multimodal_rag.enums.file_extentions import FileExtensions
-from multimodal_rag.schemas.files import ExtractedFileContent
+from backend.file_handling.extractors import PdfExtractor
+from backend.enums import FileExtensions
+from backend.schemas import ExtractedFileContent
 from gradio.utils import NamedString
 from loguru import logger
 from pathlib import Path
@@ -22,7 +22,7 @@ class FileService:
             # fmt: off
             if file_path.suffix == FileExtensions.PDF:
                 extraced_content: list[ExtractedFileContent] = (
-                    PdfProcessor.extract_content(
+                    PdfExtractor.extract_content(
                         file_path
                     )
                 )
