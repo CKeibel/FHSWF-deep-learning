@@ -8,18 +8,17 @@ from backend.enums import FileExtensions
 from backend.file_handling.chunker import TextChunker
 from backend.file_handling.extractors import PdfExtractor
 from backend.retriever.factory import DenseRetrieverFactory
-from backend.schemas import ExtractedFileContent
+from backend.schemas import ExtractedFileContent, StoreEntry
 from backend.storage.factory import VectorStoreFactory
-from backend.storage.vector_store import VectorStore
+from backend.storage.store_base import VectorStoreBase
 
 
 class StoreService:
     def __init__(self) -> None:
         self.chunker = TextChunker()
-        self.vector_store: VectorStore = VectorStoreFactory.create_vector_storage(
+        self.vector_store: VectorStoreBase = VectorStoreFactory.create_vector_storage(
             settings.VECTOR_STORE
         )
-        self.embedding_model = settings.EMBEDDING_MODEL
 
     def insert_files(self, files: list[NamedString]) -> None:
         for i, path in enumerate(files):
@@ -43,5 +42,23 @@ class StoreService:
                 chunked_texts = [doc.page_content for doc in self.chunker.chunk_text(extraced_content.text)]
                 logger.debug(f"Chunked '{file_path.name}' into {len(chunked_texts)} parts.")
 
-                for text in chunked_texts:
-                    self.vector_store.insert(text)
+                # Insert texts
+                if len(chunked_texts) > 0:
+                    self.vector_store.insert(
+                        StoreEntry(
+                            type="text",
+                            document_name=file_path.name,
+                            content=chunked_texts,
+                            vector=None,
+                        )
+                    )
+                # Images
+                if len(extraced_content.images) > 0:
+                    self.vector_store.insert(
+                        StoreEntry(
+                            type="image",
+                            document_name=file_path.name,
+                            content=extraced_content.images,
+                            vector=None,
+                        )
+                    )

@@ -1,22 +1,17 @@
-from backend.storage.vector_store import (
-    VectorStore,
-    LanceDB,
-    ChromaDB,
-    PGVector,
-    Qdrant,
-)
 from typing import Literal
 
-VectorStores = Literal["lancedb", "chromadb", "pgvector", "qdrant"]
+from backend.storage.chromadb import ChromaDB
+from backend.storage.lancedb import LanceDB
+from backend.storage.store_base import VectorStoreBase
+
+VectorStoreOptions = Literal["lancedb", "chromadb", "pgvector", "qdrant"]
 
 
 class VectorStoreFactory:
     @staticmethod
-    def create_vector_storage(name: VectorStores) -> VectorStore:
+    def create_vector_storage(option: VectorStoreOptions) -> VectorStoreBase:
         stores = {
             "lancedb": LanceDB,
             "chromadb": ChromaDB,
-            "pgvector": PGVector,
-            "qdrant": Qdrant,
         }
-        return stores[name]()
+        return stores[option]()

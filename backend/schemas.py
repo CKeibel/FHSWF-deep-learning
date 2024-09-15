@@ -1,10 +1,23 @@
-from pydantic import BaseModel
+from typing import Literal
+
+import numpy as np
+from PIL.Image import Image
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ExtractedFileContent(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
     name: str
     text: str
-    images: list
+    images: list[Image] = Field(default_factory=list)
+
+
+class StoreEntry(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    type: Literal["text", "image"]
+    document_name: str
+    content: list[str] | list[Image] = Field(default_factory=list)
+    vector: np.ndarray | None = None  # TODO: remove None
 
 
 class GenerationConfig(BaseModel):

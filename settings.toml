@@ -4,5 +4,11 @@ chunk_size = 250
 chunk_overlap = 30
 
 # vector store
-vector_store = "lancedb"
+vector_store = "chromadb"
 hybrid = true
+
+# lancedb
+embbeding_dim = 512
+
+# chromadb
+chroma_collection_name = "my_store"
