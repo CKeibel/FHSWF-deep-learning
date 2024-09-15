@@ -10,12 +10,13 @@ from pathlib import Path
 from dynaconf import settings
 
 
-class FileService:
+class StoreService:
     def __init__(self) -> None:
         self.chunker = TextChunker()
         self.vector_store: VectorStore = VectorStoreFactory.create_vector_storage(
             settings.VECTOR_STORE
         )
+        self.embedding_model = settings.EMBEDDING_MODEL
 
     def insert_files(self, files: list[NamedString]) -> None:
         for i, path in enumerate(files):
@@ -36,5 +37,8 @@ class FileService:
             # chunk text
             if extraced_content:
                 logger.info("Chunking document...")
-                chunked_content = [doc.page_content for doc in self.chunker.chunk_text(extraced_content.text)]
-                logger.debug(f"Chunked '{file_path.name}' into {len(chunked_content)} parts.")
+                chunked_texts = [doc.page_content for doc in self.chunker.chunk_text(extraced_content.text)]
+                logger.debug(f"Chunked '{file_path.name}' into {len(chunked_texts)} parts.")
+
+                for text in chunked_texts:
+                    self.vector_store.insert(text)
