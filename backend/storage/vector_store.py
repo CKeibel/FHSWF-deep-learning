@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-class VectorStoreBase(ABC):
+class VectorStore(ABC):
     @abstractmethod
     def query(self, query_vector: np.ndarray, k=1):  # TODO: define return type
         pass
@@ -16,17 +16,17 @@ class VectorStoreBase(ABC):
         pass
 
 
-class LanceDB(VectorStoreBase):
+class LanceDB(VectorStore):
     pass
 
 
-class ChromaDB(VectorStoreBase):
+class ChromaDB(VectorStore):
     pass
 
 
-class PGVector(VectorStoreBase):
+class PGVector(VectorStore):
     pass
 
 
-class Qdrant(VectorStoreBase):
+class Qdrant(VectorStore):
     pass
