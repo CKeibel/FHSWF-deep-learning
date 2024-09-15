@@ -10,7 +10,7 @@ from typing import Literal
 VectorStores = Literal["lancedb", "chromadb", "pgvector", "qdrant"]
 
 
-class VectorStorageFactory:
+class VectorStoreFactory:
     @staticmethod
     def create_vector_storage(name: VectorStores) -> VectorStore:
         stores = {
