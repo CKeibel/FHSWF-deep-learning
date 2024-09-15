@@ -1,13 +1,16 @@
-from backend.file_handling.extractors import PdfExtractor
-from backend.file_handling.chunker import TextChunker
-from backend.storage.vector_store import VectorStore
-from backend.storage.factory import VectorStoreFactory
-from backend.enums import FileExtensions
-from backend.schemas import ExtractedFileContent
+from pathlib import Path
+
+from dynaconf import settings
 from gradio.utils import NamedString
 from loguru import logger
-from pathlib import Path
-from dynaconf import settings
+
+from backend.enums import FileExtensions
+from backend.file_handling.chunker import TextChunker
+from backend.file_handling.extractors import PdfExtractor
+from backend.retriever.factory import DenseRetrieverFactory
+from backend.schemas import ExtractedFileContent
+from backend.storage.factory import VectorStoreFactory
+from backend.storage.vector_store import VectorStore
 
 
 class StoreService:

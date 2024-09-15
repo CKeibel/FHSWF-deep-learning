@@ -1,8 +1,9 @@
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 from abc import ABC, abstractmethod
 
-from multimodal_rag.models.config import CausalLMConfig
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+from backend.causal_models.settings import HFLanguageModel, HFMultimodalModel
 
 
 class CausalLMBase(ABC):
@@ -12,12 +13,12 @@ class CausalLMBase(ABC):
 
 
 class LanguageModel(CausalLMBase):
-    def __init__(self, config: CausalLMConfig) -> None:
-        self.config = config
+    def __init__(self, settings: HFLanguageModel) -> None:
+        self.settings = settings
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.tokenizer = AutoTokenizer.from_pretrained(config.path)
+        self.tokenizer = AutoTokenizer.from_pretrained(settings.name)
         self.model = AutoModelForCausalLM.from_pretrained(
-            config.path, device_map=self.device, torch_dtype=torch.bfloat16
+            settings.name, device_map=self.device, torch_dtype=torch.float16
         )
 
     def __tokenize(self, text: str) -> torch.Tensor:

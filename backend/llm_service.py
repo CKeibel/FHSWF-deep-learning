@@ -1,12 +1,10 @@
-from backend.models.causal_model import (
-    CausalLMBase,
-    LanguageModel,
-    MultimodalModel,
-)
-from backend.models.config import CausalLMConfig
 import huggingface_hub
-from loguru import logger
 from dynaconf import settings
+from loguru import logger
+
+from backend.causal_models.models import (CausalLMBase, LanguageModel,
+                                          MultimodalModel)
+from backend.retriever.config import CausalLMConfig
 
 
 class Singleton(type):
