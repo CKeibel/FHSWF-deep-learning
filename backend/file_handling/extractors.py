@@ -1,12 +1,14 @@
 # Strategy pattern
+import io
 from abc import ABC, abstractmethod
 from pathlib import Path
-from loguru import logger
-from backend.schemas import ExtractedFileContent
+
 import pymupdf
-from pymupdf import Document
+from loguru import logger
 from PIL import Image
-import io
+from pymupdf import Document
+
+from backend.schemas import ExtractedFileContent
 
 
 class ExtractorBase(ABC):

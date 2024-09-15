@@ -1,5 +1,5 @@
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from dynaconf import settings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from loguru import logger
 
 
