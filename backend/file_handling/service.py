@@ -1,5 +1,7 @@
 from backend.file_handling.extractors import PdfExtractor
 from backend.file_handling.chunker import TextChunker
+from backend.storage.vector_store import VectorStore
+from backend.storage.factory import VectorStoreFactory
 from backend.enums import FileExtensions
 from backend.schemas import ExtractedFileContent
 from gradio.utils import NamedString
@@ -10,8 +12,9 @@ from dynaconf import settings
 
 class FileService:
     def __init__(self) -> None:
-        self.chunker = TextChunker(
-            chunk_size=settings.CHUNK_SIZE, chunk_overlap=settings.CHUNK_OVERLAP
+        self.chunker = TextChunker()
+        self.vector_store: VectorStore = VectorStoreFactory.create_vector_storage(
+            settings.VECTOR_STORE
         )
 
     def insert_files(self, files: list[NamedString]) -> None:

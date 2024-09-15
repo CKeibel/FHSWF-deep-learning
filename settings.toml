@@ -4,5 +4,5 @@ chunk_size = 250
 chunk_overlap = 30
 
 # vector store
-store = "lancedb"
+vector_store = "lancedb"
 hybrid = true
