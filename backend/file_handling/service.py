@@ -14,7 +14,7 @@ class FileService:
             chunk_size=settings.CHUNK_SIZE, chunk_overlap=settings.CHUNK_OVERLAP
         )
 
-    def process_files(self, files: list[NamedString]) -> None:
+    def insert_files(self, files: list[NamedString]) -> None:
         for i, path in enumerate(files):
             extraced_content: ExtractedFileContent | None = None
             try:
