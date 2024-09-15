@@ -1,4 +1,0 @@
-causal_models:
-  - {name: "HuggingFaceH4/zephyr-7b-beta", path: "HuggingFaceH4/zephyr-7b-beta", type: "language"}
-  - {name: mistralai/Mistral-7B-Instruct-v0.3, path: "mistralai/Mistral-7B-Instruct-v0.3", type: "language"}
-  - {name: "meta-llama/Meta-Llama-3-8B", path: "meta-llama/Meta-Llama-3-8B", type: "language"}
