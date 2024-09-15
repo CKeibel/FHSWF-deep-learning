@@ -1,21 +1,14 @@
-FROM nvidia/cuda:11.3.1-cudnn8-runtime-ubuntu20.04
+FROM python:3.10-slim
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir poetry
 
-RUN pip3 install poetry
+COPY pyproject.toml poetry.lock ./
+COPY . .
 
-COPY pyproject.toml poetry.lock* /app/
-
-RUN poetry install --no-root || \
-    (pip3 install torch==2.0.0 -f https://download.pytorch.org/whl/cu113 && poetry install --no-root)
-
-COPY . /app
+RUN poetry install --no-root
 
 EXPOSE 7860
 
-CMD ["poetry", "run", "python", "src/multimodal_rag/__main__.py"]
+CMD ["poetry", "run", "python", "main.py"]
