@@ -1,4 +1,4 @@
-from backend.retriever.base_retriever import RetrieverBase
+from backend.retriever.retriever_base import RetrieverBase
 
 
 class BM25(RetrieverBase):

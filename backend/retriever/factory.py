@@ -1,7 +1,7 @@
 from typing import Literal
 
-from backend.retriever.base_retriever import RetrieverBase
 from backend.retriever.dense_retriever import ClipRetriever
+from backend.retriever.retriever_base import RetrieverBase
 
 DenseRetrieverOptions = Literal["clip"]
 SparseRetrieverOptions = Literal["bm25", "bmx"]
