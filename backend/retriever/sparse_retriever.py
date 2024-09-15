@@ -1,7 +1,16 @@
-from backend.retriever.retriever_base import RetrieverBase
+from abc import ABC, abstractmethod
+
+import numpy as np
+from PIL import Image
 
 
-class BM25(RetrieverBase):
+class SparseRetrieverBase(ABC):
+    @abstractmethod
+    def vectorize(self, input: list[str | Image.Image]) -> np.ndarray:
+        pass
+
+
+class BM25(SparseRetrieverBase):
     pass
 
 

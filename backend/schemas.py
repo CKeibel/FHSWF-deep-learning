@@ -17,7 +17,7 @@ class StoreEntry(BaseModel):
     type: Literal["text", "image"]
     document_name: str
     content: list[str] | list[Image] = Field(default_factory=list)
-    vector: np.ndarray | None = None  # TODO: remove None
+    vector: np.ndarray
 
 
 class GenerationConfig(BaseModel):

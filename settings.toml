@@ -3,6 +3,9 @@
 chunk_size = 250
 chunk_overlap = 30
 
+# dense retriever
+dense_retriever_name = "jinaai/jina-clip-v1"
+
 # vector store
 vector_store = "chromadb"
 hybrid = true

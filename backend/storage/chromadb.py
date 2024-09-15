@@ -29,7 +29,7 @@ class ChromaDB(VectorStoreBase):
                 metadatas=[
                     {"document_name": entry.document_name} for _ in entry.content
                 ],
-                embeddings=[[0.0, 0.0] for _ in entry.content],  # TODO
+                embeddings=entry.vector,
             )
         else:
             self.store.add(
@@ -38,7 +38,7 @@ class ChromaDB(VectorStoreBase):
                 metadatas=[
                     {"document_name": entry.document_name} for _ in entry.content
                 ],
-                embeddings=[[0.0, 0.0] for _ in entry.content],  # TODO
+                embeddings=entry.vector,  # TODO
             )
         logger.info("Inserted documents into ChromaDB")
 

@@ -1,20 +1,22 @@
-from typing import Literal
+from backend.retriever.dense_retriever import (ClipRetriever,
+                                               DenseRetrieverBase,
+                                               JinaClipRetriever)
+from backend.retriever.sparse_retriever import SparseRetrieverBase
 
-from backend.retriever.dense_retriever import ClipRetriever
-from backend.retriever.retriever_base import RetrieverBase
-
-DenseRetrieverOptions = Literal["clip"]
-SparseRetrieverOptions = Literal["bm25", "bmx"]
+# Mapping of model names to retriever types
+mapping: dict[str, str] = {"jinaai/jina-clip-v1": "jina-clip"}
 
 
 class DenseRetrieverFactory:
-    model_types = {
-        "clip": ClipRetriever,
-    }
+    model_types = {"clip": ClipRetriever, "jina-clip": JinaClipRetriever}
 
     @staticmethod
-    def get_model(option: DenseRetrieverOptions) -> RetrieverBase:
-        return DenseRetrieverFactory.model_types[option]()
+    def get_model(model_name: str) -> DenseRetrieverBase:
+        model_type = mapping.get(model_name)
+        if model_type:
+            return DenseRetrieverFactory.model_types[model_type](model_name)
+        else:
+            raise ValueError(f"Model {model_name} not found")
 
 
 class SparseRetrieverFactory:

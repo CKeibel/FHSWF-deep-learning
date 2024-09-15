@@ -19,6 +19,9 @@ class StoreService:
         self.vector_store: VectorStoreBase = VectorStoreFactory.create_vector_storage(
             settings.VECTOR_STORE
         )
+        self.dense_retriever = DenseRetrieverFactory.get_model(
+            settings.DENSE_RETRIEVER_NAME
+        )
 
     def insert_files(self, files: list[NamedString]) -> None:
         for i, path in enumerate(files):
@@ -32,33 +35,41 @@ class StoreService:
                 logger.error(f"Error file {path} not readable:\n{e}")
                 continue
 
-            # fmt: off
             if file_path.suffix == FileExtensions.PDF:
                 extraced_content = PdfExtractor.extract_content(file_path)
 
             # chunk text
             if extraced_content:
                 logger.info("Chunking document...")
-                chunked_texts = [doc.page_content for doc in self.chunker.chunk_text(extraced_content.text)]
-                logger.debug(f"Chunked '{file_path.name}' into {len(chunked_texts)} parts.")
+                chunked_texts = [
+                    doc.page_content
+                    for doc in self.chunker.chunk_text(extraced_content.text)
+                ]
+                logger.debug(
+                    f"Chunked '{file_path.name}' into {len(chunked_texts)} parts."
+                )
 
                 # Insert texts
                 if len(chunked_texts) > 0:
+                    dense_vectors = self.dense_retriever.vectorize(chunked_texts)
                     self.vector_store.insert(
                         StoreEntry(
                             type="text",
                             document_name=file_path.name,
                             content=chunked_texts,
-                            vector=None,
+                            vector=dense_vectors,
                         )
                     )
                 # Images
                 if len(extraced_content.images) > 0:
+                    dense_vectors = self.dense_retriever.vectorize(
+                        extraced_content.images
+                    )
                     self.vector_store.insert(
                         StoreEntry(
                             type="image",
                             document_name=file_path.name,
                             content=extraced_content.images,
-                            vector=None,
+                            vector=dense_vectors,
                         )
                     )
