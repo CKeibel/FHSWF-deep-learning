@@ -5,11 +5,16 @@ from PIL.Image import Image
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class ExtractedFileContent(BaseModel):
+class ExtractedImage(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
-    name: str
-    text: str
-    images: list[Image] = Field(default_factory=list)
+    image: Image
+    caption: str
+
+
+class ExtractedDocument(BaseModel):
+    document_name: str
+    full_text: str
+    images: list[ExtractedImage] = Field(default_factory=list)
 
 
 class StoreEntry(BaseModel):

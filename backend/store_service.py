@@ -8,7 +8,7 @@ from backend.enums import FileExtensions
 from backend.file_handling.chunker import TextChunker
 from backend.file_handling.extractors import PdfExtractor
 from backend.retriever.factory import DenseRetrieverFactory
-from backend.schemas import ExtractedFileContent, StoreEntry
+from backend.schemas import ExtractedDocument, ExtractedImage, StoreEntry
 from backend.storage.factory import VectorStoreFactory
 from backend.storage.store_base import VectorStoreBase
 
@@ -25,7 +25,7 @@ class StoreService:
 
     def insert_files(self, files: list[NamedString]) -> None:
         for i, path in enumerate(files):
-            extraced_content: ExtractedFileContent | None = None
+            extraced_content: ExtractedDocument | None = None
             try:
                 file_path = Path(path)
                 logger.info(
@@ -43,7 +43,7 @@ class StoreService:
                 logger.info("Chunking document...")
                 chunked_texts = [
                     doc.page_content
-                    for doc in self.chunker.chunk_text(extraced_content.text)
+                    for doc in self.chunker.chunk_text(extraced_content.full_text)
                 ]
                 logger.debug(
                     f"Chunked '{file_path.name}' into {len(chunked_texts)} parts."

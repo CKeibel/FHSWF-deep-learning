@@ -8,21 +8,21 @@ from loguru import logger
 from PIL import Image
 from pymupdf import Document
 
-from backend.schemas import ExtractedFileContent
+from backend.schemas import ExtractedDocument, ExtractedImage
 
 
 class ExtractorBase(ABC):
     @staticmethod
     @abstractmethod
-    def extract_content(file: Path) -> ExtractedFileContent:
+    def extract_content(file: Path) -> ExtractedDocument:
         pass
 
 
 class PdfExtractor(ExtractorBase):
     @staticmethod
-    def extract_content(file: Path) -> ExtractedFileContent:
+    def extract_content(file: Path) -> ExtractedDocument:
         text: str = str()
-        images: list[Image.Image] = list()
+        images: list[ExtractedImage] = list()
 
         document: Document = pymupdf.open(file)
         logger.info("Extracting content...")
@@ -37,12 +37,27 @@ class PdfExtractor(ExtractorBase):
             text += page_text
 
             # extracting images
-            image_list = page.get_images()
+            image_list = page.get_images(full=True)
             for img in image_list:
                 xref = img[0]
                 base_image = document.extract_image(xref)
                 image_bytes = base_image["image"]
-                images.append(Image.open(io.BytesIO(image_bytes)))
+                # Get the bounding box of the image
+                img_rect = page.get_image_bbox(img)
+
+                # Expand the bounding box to get nearby text
+                expanded_rect = pymupdf.Rect(
+                    0, img_rect.y0 + 70, 1440, img_rect.y1 + 70
+                )
+
+                # Get the text near the image
+                nearby_text = page.get_text("text", clip=expanded_rect)
+                images.append(
+                    ExtractedImage(
+                        image=Image.open(io.BytesIO(image_bytes)),
+                        caption=nearby_text,
+                    )
+                )
 
         logger.info("Finished content extraction.")
-        return ExtractedFileContent(name=file.name, text=text, images=images)
+        return ExtractedDocument(name=file.name, full_text=text, images=images)
