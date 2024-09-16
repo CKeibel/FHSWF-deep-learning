@@ -5,6 +5,7 @@
 .python-version
 
 notebooks/files/
+*database
 
 # Ignore dynaconf secret files
 .secrets.*

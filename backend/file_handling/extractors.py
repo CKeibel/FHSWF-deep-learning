@@ -1,5 +1,6 @@
 # Strategy pattern
 import io
+import uuid
 from abc import ABC, abstractmethod
 from pathlib import Path
 
@@ -8,19 +9,19 @@ from loguru import logger
 from PIL import Image
 from pymupdf import Document
 
-from backend.schemas import ExtractedDocument, ExtractedImage
+from backend.schemas import ExtractedContent, ExtractedImage
 
 
 class ExtractorBase(ABC):
     @staticmethod
     @abstractmethod
-    def extract_content(file: Path) -> ExtractedDocument:
+    def extract_content(file: Path) -> ExtractedContent:
         pass
 
 
 class PdfExtractor(ExtractorBase):
     @staticmethod
-    def extract_content(file: Path) -> ExtractedDocument:
+    def extract_content(file: Path) -> ExtractedContent:
         text: str = str()
         images: list[ExtractedImage] = list()
 
@@ -54,10 +55,12 @@ class PdfExtractor(ExtractorBase):
                 nearby_text = page.get_text("text", clip=expanded_rect)
                 images.append(
                     ExtractedImage(
+                        id=f"{uuid.uuid4()}",
                         image=Image.open(io.BytesIO(image_bytes)),
                         caption=nearby_text,
+                        document_name=file.name,
                     )
                 )
 
         logger.info("Finished content extraction.")
-        return ExtractedDocument(name=file.name, full_text=text, images=images)
+        return ExtractedContent(document_name=file.name, full_text=text, images=images)

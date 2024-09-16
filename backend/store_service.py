@@ -8,7 +8,7 @@ from backend.enums import FileExtensions
 from backend.file_handling.chunker import TextChunker
 from backend.file_handling.extractors import PdfExtractor
 from backend.retriever.factory import DenseRetrieverFactory
-from backend.schemas import ExtractedDocument, ExtractedImage, StoreEntry
+from backend.schemas import ExtractedContent, StoreEntry
 from backend.storage.factory import VectorStoreFactory
 from backend.storage.store_base import VectorStoreBase
 
@@ -25,7 +25,7 @@ class StoreService:
 
     def insert_files(self, files: list[NamedString]) -> None:
         for i, path in enumerate(files):
-            extraced_content: ExtractedDocument | None = None
+            extraced_content: ExtractedContent | None = None
             try:
                 file_path = Path(path)
                 logger.info(
@@ -51,25 +51,44 @@ class StoreService:
 
                 # Insert texts
                 if len(chunked_texts) > 0:
-                    dense_vectors = self.dense_retriever.vectorize(chunked_texts)
+                    dense_text_vectors = self.dense_retriever.vectorize(chunked_texts)
                     self.vector_store.insert(
                         StoreEntry(
                             type="text",
                             document_name=file_path.name,
                             content=chunked_texts,
-                            vector=dense_vectors,
+                            vector=dense_text_vectors,
                         )
                     )
                 # Images
-                if len(extraced_content.images) > 0:
-                    dense_vectors = self.dense_retriever.vectorize(
+                if (
+                    len(extraced_content.images) > 0
+                    and self.dense_retriever.is_multimodal()
+                ):
+                    dense_image_vectors = self.dense_retriever.vectorize(
                         extraced_content.images
                     )
-                    self.vector_store.insert(
-                        StoreEntry(
-                            type="image",
-                            document_name=file_path.name,
-                            content=extraced_content.images,
-                            vector=dense_vectors,
+                    # Image embeddings
+                    if dense_image_vectors is not None:
+                        self.vector_store.insert(
+                            StoreEntry(
+                                type="image",
+                                document_name=file_path.name,
+                                content=extraced_content.images,
+                                vector=dense_image_vectors,
+                            )
                         )
+                    dense_caption_vectors = self.dense_retriever.vectorize(
+                        [img.caption for img in extraced_content.images]
                     )
+
+                    # Caption embeddings
+                    if dense_caption_vectors is not None:
+                        self.vector_store.insert(
+                            StoreEntry(
+                                type="caption",
+                                document_name=file_path.name,
+                                content=extraced_content.images,
+                                vector=dense_caption_vectors,
+                            )
+                        )

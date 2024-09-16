@@ -4,7 +4,10 @@ from backend.retriever.dense_retriever import (ClipRetriever,
 from backend.retriever.sparse_retriever import SparseRetrieverBase
 
 # Mapping of model names to retriever types
-mapping: dict[str, str] = {"jinaai/jina-clip-v1": "jina-clip"}
+mapping: dict[str, str] = {
+    "jinaai/jina-clip-v1": "jina-clip",
+    "openai/clip-vit-base-patch32": "clip",
+}
 
 
 class DenseRetrieverFactory:
