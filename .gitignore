@@ -4,5 +4,7 @@
 .venv
 .python-version
 
+notebooks/files/
+
 # Ignore dynaconf secret files
 .secrets.*
