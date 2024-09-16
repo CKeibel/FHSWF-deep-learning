@@ -1,15 +1,8 @@
 # Multimodal (Decoder) RAG
 ## Todos
 - System (chat/ rag) prompt
-- Vector Store
-- RAG
-- Compatibility with multimodal models
-- HuggingFace login (needs to be outsourced)
-- Implement ModelManager as LLMFactory
-- Implement Retriever Factory
-- Implement some File manager and Chunking manager (abstract)
-- split frontend into different files (per tab) and implement belonging service (to connect to "backend")
-
+- Autoregressive Transfomer response
+  
 # Installation
 1. Clone the repsitory:
 
@@ -54,7 +47,7 @@ poetry install
 ```
 
 ## Usage
-Run the appilication as module with `python -m multimodal-rag` or alternatively `python src/multimodal_rag/__main__.py`.
+Stat the application via `python main.py`.
 
 When starting up, two urls will be available to access the interface. Use the **local url** when you are working on your local machine. If the app runs on a remote cluster (e.g. the fh-swf cluster) use the **public url**.
 
@@ -70,7 +63,7 @@ When you start the app on the *fh-swf cluster* make sure that your “current wo
             "request": "launch",
             ...
             "cwd": "/home/<USER>/FHSWF-deep-learning/", # set <USER>
-            "program": "src/multimodal_rag/__main__.py",
+            "program": "main.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             ...
