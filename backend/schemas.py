@@ -27,6 +27,13 @@ class StoreEntry(BaseModel):
     vector: np.ndarray
 
 
+class SearchResult(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    text: str
+    document_name: str
+    image: Image | None = None
+
+
 class GenerationConfig(BaseModel):
     max_new_tokens: int
     top_p: float

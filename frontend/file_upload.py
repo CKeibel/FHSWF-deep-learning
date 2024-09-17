@@ -1,15 +1,13 @@
-from backend.store_service import StoreService
+from contextlib import contextmanager
+
 import gradio as gr
 from gradio.utils import NamedString
 
-from contextlib import contextmanager
-
-
-file_service = StoreService()
+from backend.store_service import store_service
 
 
 def upload_files(files: list[NamedString]) -> None:
-    file_service.insert_files(files)
+    store_service.insert_files(files)
 
 
 @contextmanager

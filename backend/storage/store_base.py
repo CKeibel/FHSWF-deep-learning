@@ -2,16 +2,16 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from backend.schemas import StoreEntry
+from backend.schemas import SearchResult, StoreEntry
 
 
 class VectorStoreBase(ABC):
     @abstractmethod
-    def query(self, query_vector: np.ndarray, k=1):  # TODO: define return type
+    def query(self, query_vector: np.ndarray, k=10) -> list[SearchResult]:
         pass
 
     @abstractmethod
-    def insert(self, entry: StoreEntry) -> None:  # TODO: Document type
+    def insert(self, entry: StoreEntry) -> None:
         pass
 
     @abstractmethod

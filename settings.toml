@@ -1,7 +1,7 @@
 [default]
 # chunking
-chunk_size = 250
-chunk_overlap = 30
+chunk_size = 450
+chunk_overlap = 0
 
 # dense retriever
 dense_retriever_name = "jinaai/jina-clip-v1"

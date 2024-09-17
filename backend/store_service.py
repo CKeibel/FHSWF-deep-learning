@@ -92,3 +92,12 @@ class StoreService:
                                 vector=dense_caption_vectors,
                             )
                         )
+
+    def inference(self, query: str) -> str:
+        query_vector = self.dense_retriever.vectorize([query])
+        result = self.vector_store.query(query_vector)
+        # language model generation
+        pass
+
+
+store_service = StoreService()

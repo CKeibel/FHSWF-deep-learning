@@ -5,8 +5,9 @@ import chromadb
 import numpy as np
 from dynaconf import settings
 from loguru import logger
+from PIL import Image
 
-from backend.schemas import ExtractedImage, StoreEntry
+from backend.schemas import ExtractedImage, SearchResult, StoreEntry
 from backend.storage.store_base import VectorStoreBase
 
 
@@ -18,8 +19,26 @@ class ChromaDB(VectorStoreBase):
             name=settings.CHROMA_COLLECTION_NAME
         )
 
-    def query(self, query_vector: np.ndarray, k=1):  # TODO: define return type
-        pass
+    def query(self, query_vector: np.ndarray, k=10) -> list[SearchResult]:
+        store_results = self.store.query(query_vector, n_results=k)
+        results = []
+        if "documents" in store_results:
+            for text, metadata in zip(
+                store_results["documents"][0], store_results["metadatas"][0]
+            ):
+                # Load image if available
+                img = None
+                if "image_path" in metadata:
+                    img = Image.open(metadata["image_path"])
+
+                # Append result
+                results.append(
+                    SearchResult(
+                        text=text, document_name=metadata["document_name"], image=img
+                    )
+                )
+
+        return results
 
     def insert(self, entry: StoreEntry) -> None:  # TODO: Document type
 
