@@ -84,6 +84,8 @@ class ChromaDB(VectorStoreBase):
         else:
             logger.error(f"Invalid entry type: {entry.type}")
 
+        logger.info("Finished inserting content.")
+
     def delete(self, document_ids) -> None:  # TODO: param
         pass
 

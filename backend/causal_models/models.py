@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 import torch
 from jinja2 import Template
+from loguru import logger
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from backend.causal_models.settings import (CausalModelSettings,
@@ -26,6 +27,9 @@ class LanguageModel(CausalLMBase):
     def __init__(self, settings: HuggingFaceModelSettings) -> None:
         self.settings = settings
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        logger.info(
+            f"Loading '{self.settings.model_id}' to {self.device}... This can take a while..."
+        )
         self.tokenizer = AutoTokenizer.from_pretrained(self.settings.model_id)
         self.model = AutoModelForCausalLM.from_pretrained(
             self.settings.model_id, device_map=self.device, torch_dtype=torch.float16
@@ -53,7 +57,9 @@ class LanguageModel(CausalLMBase):
     ) -> str:
         prompt = self._construct_prompt(question, search_results)
         inputs_ids = self._tokenize(prompt)
-        outputs = self.model.generate(inputs_ids, **kwargs)  # TODO: generation config
+        outputs = self.model.generate(
+            inputs_ids, **kwargs, max_new_tokens=250
+        )  # TODO: generation config
         # decode only new tokens to string
         answer = self.tokenizer.decode(
             outputs[0][len(inputs_ids[0]) :], skip_special_tokens=True

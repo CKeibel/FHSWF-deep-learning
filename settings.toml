@@ -7,7 +7,7 @@ chunk_overlap = 0
 dense_retriever_name = "jinaai/jina-clip-v1"
 
 # causal model
-causal_model_name = "llama3"
+causal_model_name = "llama3_8b_instruct"
 
 # vector store
 vector_store = "chromadb"
