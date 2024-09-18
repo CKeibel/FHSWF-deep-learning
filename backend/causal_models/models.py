@@ -87,8 +87,13 @@ class MultimodalModel(CausalLMBase):
             self.settings.chat_template
         )
 
-    def _tokenize(self, text: str) -> torch.Tensor:
-        return self.processor(text, return_tensors="pt").input_ids.to(self.device)
+    def _tokenize(self, text: str, images: list[Image.Image]) -> torch.Tensor:
+        if len(images) > 0:
+            return self.processor(
+                text, images=images, return_tensors="pt"
+            ).input_ids.to(self.device)
+        else:
+            return self.processor(text, return_tensors="pt").input_ids.to(self.device)
 
     def _construct_prompt(
         self, question: str, search_results: list[SearchResult]
@@ -105,7 +110,7 @@ class MultimodalModel(CausalLMBase):
             context["content"].append(
                 {
                     "type": "text",
-                    "content": result.text,
+                    "text": result.text,
                 }
             )
 
@@ -113,19 +118,28 @@ class MultimodalModel(CausalLMBase):
                 "role": "user",
                 "content": [{"type": "text", "content": [question]}],
             }
-            return self.template.render(
-                messages=[context, user_message], add_generation_prompt=True
-            )
+        return self.template.render(
+            messages=[context, user_message], add_generation_prompt=True
+        )
+
+    def _load_images(self, search_results: list[SearchResult]) -> list[Image.Image]:
+        images = []
+        for result in search_results:
+            if result.image is not None:
+                logger.debug(f"Load image '{result.image}' from disk...")
+                img = Image.open(result.image)
+        return images
 
     @torch.no_grad()
     def generate(
         self, question: str, search_results: list[SearchResult], **kwargs
     ) -> str:
         prompt = self._construct_prompt(question, search_results)
-        inputs_ids = self._tokenize(prompt)
+        images = self._load_images(search_results)
+        inputs_ids = self._tokenize(prompt, images)
         outputs = self.model.generate(inputs_ids, **kwargs, max_new_tokens=250)
         # decode only new tokens to string
-        answer = self.processor.batch_decode(
+        answer = self.processor.decode(
             outputs[0][len(inputs_ids[0]) :], skip_special_tokens=True
         )
         torch.cuda.empty_cache()
