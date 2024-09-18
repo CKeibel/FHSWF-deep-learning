@@ -1,44 +1,58 @@
 from abc import ABC, abstractmethod
 
 import torch
+from jinja2 import Template
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from backend.causal_models.settings import HFLanguageModel, HFMultimodalModel
+from backend.causal_models.settings import (CausalModelSettings,
+                                            HuggingFaceModelSettings)
+from backend.prompts.prompt_manager import PromptManager
+from backend.schemas import SearchResult
 
 
 class CausalLMBase(ABC):
     @abstractmethod
-    def generate(self, input: str, **kwargs) -> str:
+    def __init__(self, settingd: CausalModelSettings) -> None:
+        pass
+
+    @abstractmethod
+    def generate(
+        self, question: str, search_results: list[SearchResult], **kwargs
+    ) -> str:
         pass
 
 
 class LanguageModel(CausalLMBase):
-    def __init__(self, settings: HFLanguageModel) -> None:
+    def __init__(self, settings: HuggingFaceModelSettings) -> None:
         self.settings = settings
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.tokenizer = AutoTokenizer.from_pretrained(settings.name)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.settings.model_id)
         self.model = AutoModelForCausalLM.from_pretrained(
-            settings.name, device_map=self.device, torch_dtype=torch.float16
+            self.settings.model_id, device_map=self.device, torch_dtype=torch.float16
+        )
+        self.template: Template = PromptManager.get_prompt_template(
+            self.settings.chat_template
         )
 
-    def __tokenize(self, text: str) -> torch.Tensor:
-        """Function to tokenize the input text and return the input_ids tensor.
-        Args:
-            text (str): The input text to be tokenized.
-        Returns:
-            torch.Tensor: The input_ids tensor.
-        """
+    def _tokenize(self, text: str) -> torch.Tensor:
         return self.tokenizer(text, return_tensors="pt").input_ids.to(self.device)
 
+    def _construct_prompt(
+        self, question: str, search_results: list[SearchResult]
+    ) -> str:
+        context = {"role": "context", "content": list()}
+        for result in search_results:
+            context["content"].append(result.text)
+
+        user_message = {"role": "user", "content": [question]}
+        return self.template.render(messages=[context, user_message])
+
     @torch.no_grad()
-    def generate(self, input: str, **kwargs) -> str:
-        """Function to generate the answer for the given input text.
-        Args:
-            input (str): The input text for which the answer needs to be generated.
-        Returns:
-            str: The generated answer.
-        """
-        inputs_ids = self.__tokenize(input)  # TODO: RAG Template prompt
+    def generate(
+        self, question: str, search_results: list[SearchResult], **kwargs
+    ) -> str:
+        prompt = self._construct_prompt(question, search_results)
+        inputs_ids = self._tokenize(prompt)
         outputs = self.model.generate(inputs_ids, **kwargs)  # TODO: generation config
         # decode only new tokens to string
         answer = self.tokenizer.decode(

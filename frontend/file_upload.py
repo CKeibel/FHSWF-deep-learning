@@ -3,11 +3,11 @@ from contextlib import contextmanager
 import gradio as gr
 from gradio.utils import NamedString
 
-from backend.store_service import store_service
+from backend.service import service
 
 
 def upload_files(files: list[NamedString]) -> None:
-    store_service.insert_files(files)
+    service.insert_files(files)
 
 
 @contextmanager

@@ -1,9 +1,11 @@
 from pathlib import Path
 
+import huggingface_hub
 from dynaconf import settings
 from gradio.utils import NamedString
 from loguru import logger
 
+from backend.causal_models.factory import CausalLMFactory
 from backend.enums import FileExtensions
 from backend.file_handling.chunker import TextChunker
 from backend.file_handling.extractors import PdfExtractor
@@ -13,8 +15,9 @@ from backend.storage.factory import VectorStoreFactory
 from backend.storage.store_base import VectorStoreBase
 
 
-class StoreService:
+class Service:
     def __init__(self) -> None:
+        Service.hf_login()
         self.chunker = TextChunker()
         self.vector_store: VectorStoreBase = VectorStoreFactory.create_vector_storage(
             settings.VECTOR_STORE
@@ -22,6 +25,7 @@ class StoreService:
         self.dense_retriever = DenseRetrieverFactory.get_model(
             settings.DENSE_RETRIEVER_NAME
         )
+        self.causal_model = CausalLMFactory.get_model(settings.CAUSAL_MODEL_NAME)
 
     def insert_files(self, files: list[NamedString]) -> None:
         for i, path in enumerate(files):
@@ -94,10 +98,29 @@ class StoreService:
                         )
 
     def inference(self, query: str) -> str:
+        logger.info(f"Got following user query: {query}")
         query_vector = self.dense_retriever.vectorize([query])
         result = self.vector_store.query(query_vector)
-        # language model generation
-        pass
+        return self.causal_model.generate(query, result)
+
+    @staticmethod
+    def hf_login(secret: str | None = None) -> None:
+        if secret is None:
+            try:
+                secret = settings.HF_SECRET
+            except:
+                logger.warning(
+                    "Couldn't login into huggingface hub. Check if 'HF_SECRET environment variable is set.'"
+                )
+                return
+
+        if secret:
+            huggingface_hub.login(secret)
+            logger.info("Logged in to Hugging Face.")
+        else:
+            logger.warning(
+                "No Hugging Face token found. Please set 'HF_SECRET' environment variable."
+            )
 
 
-store_service = StoreService()
+service = Service()

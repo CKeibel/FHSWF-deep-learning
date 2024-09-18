@@ -2,11 +2,11 @@ from contextlib import contextmanager
 
 import gradio as gr
 
-from backend.store_service import store_service
+from backend.service import service
 
 
 def answer(message: str, history: list[str]) -> tuple[str, list[list[str]]]:
-    reply = store_service.inference(message)
+    reply = service.inference(message)
     history.append([message, reply])
     return "", history
 
