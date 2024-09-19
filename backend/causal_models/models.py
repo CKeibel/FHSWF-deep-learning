@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
+import matplotlib.pyplot as plt
 import torch
 from jinja2 import Template
 from loguru import logger
 from PIL import Image
-import matplotlib.pyplot as plt
 from transformers import (AutoModelForCausalLM, AutoModelForVision2Seq,
                           AutoProcessor, AutoTokenizer)
 
@@ -122,15 +122,6 @@ class MultimodalModel(CausalLMBase):
         return self.template.render(
             messages=[context, user_message], add_generation_prompt=True
         )
-
-    def _load_images(self, search_results: list[SearchResult]) -> list[Image.Image]:
-        images = []
-        for result in search_results:
-            if result.image is not None:
-                logger.debug(f"Load image '{result.image}' from disk...")
-                img = Image.open(result.image)
-                images.append(img)
-        return images
 
     @torch.no_grad()
     def generate(
