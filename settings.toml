@@ -1,6 +1,6 @@
 [default]
 # chunking
-chunger = "semantic"
+chunker = "semantic"
 chunk_size = 450
 chunk_overlap = 0
 
