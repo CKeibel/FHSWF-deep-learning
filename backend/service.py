@@ -23,12 +23,10 @@ class Service:
             settings.VECTOR_STORE
         )
         self.retrieve_n = settings.RETRIEVE_N
-        """
         self.dense_retriever = DenseRetrieverFactory.get_model(
             settings.DENSE_RETRIEVER_NAME
         )
         self.causal_model = CausalLMFactory.get_model(settings.CAUSAL_MODEL_NAME)
-        """
         self.generation_config = GenerationConfig(
             max_new_tokens=250,
             no_repeat_ngram_size=3,
