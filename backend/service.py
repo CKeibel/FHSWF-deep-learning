@@ -111,7 +111,9 @@ class Service:
         query_vector = self.dense_retriever.vectorize([query])
         logger.info(f"Trying to find the {self.retrieve_n} best matching documents...")
         result = self.vector_store.query(query_vector, self.retrieve_n)
-        return self.causal_model.generate(query, result, self.generation_config.dict())
+        return self.causal_model.generate(
+            query, result, **self.generation_config.dict()
+        )
 
     @staticmethod
     def hf_login(secret: str | None = None) -> None:

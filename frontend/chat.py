@@ -19,7 +19,7 @@ def update_generation_config(*args):
             max_new_tokens=args[0],
             no_repeat_ngram_size=args[1],
             temperature=args[2],
-            top_k=args[3],
+            top_k=int(args[3]),
             num_beams=args[4],
             do_sample=True,
         )
