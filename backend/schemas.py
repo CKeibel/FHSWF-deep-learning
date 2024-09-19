@@ -36,6 +36,8 @@ class SearchResult(BaseModel):
 
 class GenerationConfig(BaseModel):
     max_new_tokens: int
-    top_p: float
+    no_repeat_ngram_size: int
     top_k: float
-    # ... TODO
+    temperature: float
+    num_beams: int
+    do_sample: bool

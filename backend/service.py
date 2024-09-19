@@ -10,7 +10,7 @@ from backend.enums import FileExtensions
 from backend.file_handling.chunker import TextChunker
 from backend.file_handling.extractors import PdfExtractor
 from backend.retriever.factory import DenseRetrieverFactory
-from backend.schemas import ExtractedContent, StoreEntry
+from backend.schemas import ExtractedContent, GenerationConfig, StoreEntry
 from backend.storage.factory import VectorStoreFactory
 from backend.storage.store_base import VectorStoreBase
 
@@ -23,10 +23,20 @@ class Service:
             settings.VECTOR_STORE
         )
         self.retrieve_n = settings.RETRIEVE_N
+        """
         self.dense_retriever = DenseRetrieverFactory.get_model(
             settings.DENSE_RETRIEVER_NAME
         )
         self.causal_model = CausalLMFactory.get_model(settings.CAUSAL_MODEL_NAME)
+        """
+        self.generation_config = GenerationConfig(
+            max_new_tokens=250,
+            no_repeat_ngram_size=3,
+            temperature=1.0,
+            top_k=85,
+            num_beams=1,
+            do_sample=True,
+        )
 
     def insert_files(self, files: list[NamedString]) -> None:
         for i, path in enumerate(files):
@@ -103,7 +113,7 @@ class Service:
         query_vector = self.dense_retriever.vectorize([query])
         logger.info(f"Trying to find the {self.retrieve_n} best matching documents...")
         result = self.vector_store.query(query_vector, self.retrieve_n)
-        return self.causal_model.generate(query, result)
+        return self.causal_model.generate(query, result, self.generation_config.dict())
 
     @staticmethod
     def hf_login(secret: str | None = None) -> None:
@@ -123,6 +133,10 @@ class Service:
             logger.warning(
                 "No Hugging Face token found. Please set 'HF_SECRET' environment variable."
             )
+
+    def update_generation_config(self, generation_config: GenerationConfig) -> None:
+        self.generation_config = generation_config
+        logger.info(f"Updated generation config: {self.generation_config.dict()}")
 
 
 service = Service()

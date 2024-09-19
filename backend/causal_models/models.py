@@ -62,9 +62,8 @@ class LanguageModel(CausalLMBase):
     ) -> str:
         prompt = self._construct_prompt(question, search_results)
         inputs_ids = self._tokenize(prompt)
-        outputs = self.model.generate(
-            inputs_ids, **kwargs, max_new_tokens=250
-        )  # TODO: generation config
+        logger.debug(f"Starting generation with {kwargs}...")
+        outputs = self.model.generate(inputs_ids, **kwargs)
         # decode only new tokens to string
         answer = self.tokenizer.decode(
             outputs[0][len(inputs_ids[0]) :], skip_special_tokens=True
@@ -130,7 +129,8 @@ class MultimodalModel(CausalLMBase):
         prompt = self._construct_prompt(question, search_results)
         images = [result.image for result in search_results if result.image is not None]
         inputs_ids = self._tokenize(prompt, images)
-        outputs = self.model.generate(inputs_ids, **kwargs, max_new_tokens=250)
+        logger.debug(f"Starting generation with {kwargs}...")
+        outputs = self.model.generate(inputs_ids, **kwargs)
         # decode only new tokens to string
         answer = self.processor.decode(
             outputs[0][len(inputs_ids[0]) :], skip_special_tokens=True
