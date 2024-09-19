@@ -63,9 +63,7 @@ class Service:
                     trailing_punctuation=True,
                 )
                 logger.info("Chunking document...")
-                chunked_texts = [
-                    doc.page_content for doc in self.chunker.chunk_text(cleaned_text)
-                ]
+                chunked_texts = self.chunker.chunk_text(cleaned_text)
                 logger.debug(
                     f"Chunked '{file_path.name}' into {len(chunked_texts)} parts."
                 )

@@ -37,9 +37,10 @@ class RecursiveTextChunker(TextChunker):
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,
             length_function=len,
-            is_separator_regex=True,
+            is_separator_regex=False,
         )
-        return text_splitter.create_documents([text])
+        docs = text_splitter.create_documents([text])
+        return [doc.page_content for doc in docs]
 
 
 class SemanticTextChunker(TextChunker):
@@ -57,7 +58,8 @@ class SemanticTextChunker(TextChunker):
         self.text_splitter = SemanticChunker(model)
 
     def chunk_text(self, text: str) -> list[str]:
-        return self.text_splitter.chunk_text(text)
+        docs = self.text_splitter.create_documents([text])
+        return [doc.page_content for doc in docs]
 
 
 class TextChunkerFactory:
