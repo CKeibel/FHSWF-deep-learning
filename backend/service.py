@@ -4,10 +4,11 @@ import huggingface_hub
 from dynaconf import settings
 from gradio.utils import NamedString
 from loguru import logger
+from unstructured.cleaners.core import clean
 
 from backend.causal_models.factory import CausalLMFactory
 from backend.enums import FileExtensions
-from backend.file_handling.chunker import TextChunker
+from backend.file_handling.chunker import TextChunkerFactory
 from backend.file_handling.extractors import PdfExtractor
 from backend.retriever.factory import DenseRetrieverFactory
 from backend.schemas import ExtractedContent, GenerationConfig, StoreEntry
@@ -18,7 +19,7 @@ from backend.storage.store_base import VectorStoreBase
 class Service:
     def __init__(self) -> None:
         Service.hf_login()
-        self.chunker = TextChunker()
+        self.chunker = TextChunkerFactory.create_text_chunker(settings.CHUNKER)
         self.vector_store: VectorStoreBase = VectorStoreFactory.create_vector_storage(
             settings.VECTOR_STORE
         )
@@ -53,10 +54,17 @@ class Service:
 
             # chunk text
             if extraced_content:
+                # Clean text
+                cleaned_text = clean(
+                    extraced_content.full_text,
+                    bullets=True,
+                    extra_whitespace=True,
+                    dashes=True,
+                    trailing_punctuation=True,
+                )
                 logger.info("Chunking document...")
                 chunked_texts = [
-                    doc.page_content
-                    for doc in self.chunker.chunk_text(extraced_content.full_text)
+                    doc.page_content for doc in self.chunker.chunk_text(cleaned_text)
                 ]
                 logger.debug(
                     f"Chunked '{file_path.name}' into {len(chunked_texts)} parts."
