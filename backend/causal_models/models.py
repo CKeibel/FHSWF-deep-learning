@@ -128,6 +128,7 @@ class MultimodalModel(CausalLMBase):
             if result.image is not None:
                 logger.debug(f"Load image '{result.image}' from disk...")
                 img = Image.open(result.image)
+                images.append(img)
         return images
 
     @torch.no_grad()
