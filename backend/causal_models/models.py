@@ -4,6 +4,7 @@ import torch
 from jinja2 import Template
 from loguru import logger
 from PIL import Image
+import matplotlib.pyplot as plt
 from transformers import (AutoModelForCausalLM, AutoModelForVision2Seq,
                           AutoProcessor, AutoTokenizer)
 
@@ -136,7 +137,7 @@ class MultimodalModel(CausalLMBase):
         self, question: str, search_results: list[SearchResult], **kwargs
     ) -> str:
         prompt = self._construct_prompt(question, search_results)
-        images = self._load_images(search_results)
+        images = [result.image for result in search_results if result.image is not None]
         inputs_ids = self._tokenize(prompt, images)
         outputs = self.model.generate(inputs_ids, **kwargs, max_new_tokens=250)
         # decode only new tokens to string
