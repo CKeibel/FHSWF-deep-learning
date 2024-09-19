@@ -11,6 +11,7 @@ causal_model_name = "idefics2_chat"
 
 # vector store
 vector_store = "chromadb"
+retrieve_n = 5
 hybrid = true
 
 # lancedb

@@ -22,6 +22,7 @@ class Service:
         self.vector_store: VectorStoreBase = VectorStoreFactory.create_vector_storage(
             settings.VECTOR_STORE
         )
+        self.retrieve_n = settings.RETRIEVE_N
         self.dense_retriever = DenseRetrieverFactory.get_model(
             settings.DENSE_RETRIEVER_NAME
         )
@@ -100,7 +101,8 @@ class Service:
     def inference(self, query: str) -> str:
         logger.info(f"Got following user query: {query}")
         query_vector = self.dense_retriever.vectorize([query])
-        result = self.vector_store.query(query_vector)
+        logger.info(f"Trying to find the {self.retrieve_n} best matching documents...")
+        result = self.vector_store.query(query_vector, self.retrieve_n)
         return self.causal_model.generate(query, result)
 
     @staticmethod
