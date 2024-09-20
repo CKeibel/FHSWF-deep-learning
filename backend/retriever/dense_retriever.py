@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 from loguru import logger
 from transformers import AutoModel, AutoTokenizer, CLIPModel, CLIPProcessor
 
@@ -35,6 +36,17 @@ class BertRetriever(DenseRetrieverBase):
     def is_multimodal(self) -> bool:
         return False
 
+    def mean_pooling(self, model_output, attention_mask):
+        token_embeddings = model_output[
+            0
+        ]  # First element of model_output contains all token embeddings
+        input_mask_expanded = (
+            attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+        )
+        return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(
+            input_mask_expanded.sum(1), min=1e-9
+        )
+
     @torch.no_grad()
     def vectorize(self, inputs: list[str | ExtractedImage]) -> np.ndarray | None:
         if isinstance(inputs[0], ExtractedImage):
@@ -46,9 +58,9 @@ class BertRetriever(DenseRetrieverBase):
                 inputs, padding=True, truncation=True, return_tensors="pt"
             )
             inputs = {k: v.to(self.device) for k, v in inputs.items()}
-            with torch.no_grad():
-                outputs = self.model(**inputs)
-            return outputs.pooler_output.cpu().detach().numpy()
+            outputs = self.model(**inputs)
+            embeddings = self.mean_pooling(outputs, inputs["attention_mask"])
+            return F.normalize(embeddings, p=2, dim=1).cpu().numpy()
 
 
 class ClipRetriever(DenseRetrieverBase):

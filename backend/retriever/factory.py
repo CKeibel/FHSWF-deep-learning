@@ -1,25 +1,23 @@
-from backend.retriever.dense_retriever import (ClipRetriever,
+from backend.retriever.dense_retriever import (BertRetriever, ClipRetriever,
                                                DenseRetrieverBase,
                                                JinaClipRetriever)
 from backend.retriever.sparse_retriever import SparseRetrieverBase
 
-# Mapping of model names to retriever types
-mapping: dict[str, str] = {
-    "jinaai/jina-clip-v1": "jina-clip",
-    "openai/clip-vit-base-patch32": "clip",
-}
-
 
 class DenseRetrieverFactory:
-    model_types = {"clip": ClipRetriever, "jina-clip": JinaClipRetriever}
+    model_types = {
+        "sentence-transformers/all-MiniLM-L6-v2": BertRetriever,
+        "openai/clip-vit-base-patch32": ClipRetriever,
+        "jinaai/jina-clip-v1": JinaClipRetriever,
+    }
 
     @staticmethod
-    def get_model(model_name: str) -> DenseRetrieverBase:
-        model_type = mapping.get(model_name)
-        if model_type:
-            return DenseRetrieverFactory.model_types[model_type](model_name)
+    def get_model(model_id: str) -> DenseRetrieverBase:
+        retriever_class = DenseRetrieverFactory.model_types.get(model_id)
+        if retriever_class:
+            return retriever_class(model_id)
         else:
-            raise ValueError(f"Model {model_name} not found")
+            raise ValueError(f"Model {model_id} not found")
 
 
 class SparseRetrieverFactory:
