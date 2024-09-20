@@ -43,10 +43,16 @@ class Idefics2Chat(HuggingFaceModelSettings):
 
 
 class Settings:
-    llama3_8b: Llama3SmallSettings = Llama3SmallSettings()
-    llama3_8b_instruct: Llama3SmallInstruct = Llama3SmallInstruct()
-    idefics2_chat: Idefics2Chat = Idefics2Chat()
+    models: dict[str, CausalModelSettings] = {
+        "meta-llama/Meta-Llama-3.1-8B": Llama3SmallSettings(),
+        "meta-llama/Meta-Llama-3.1-8B-Instruct": Llama3SmallInstruct(),
+        "HuggingFaceM4/idefics2-8b-chatty": Idefics2Chat(),
+    }
 
 
-def get_settings() -> Settings:
-    return Settings()
+def get_settings(model_id: str) -> HuggingFaceModelSettings:
+    settings = Settings()
+    for model, setting in settings.models.itmes():
+        if model == model_id:
+            return setting
+    raise ValueError(f"Settings for model_id '{model_id}' not found.")
