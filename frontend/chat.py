@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 
 import gradio as gr
+from dynaconf import settings
 
 from backend.schemas import GenerationConfig
 from backend.service import service
@@ -13,7 +14,6 @@ def answer(message: str, history: list[str]) -> tuple[str, list[list[str]]]:
 
 
 def update_generation_config(*args):
-
     service.update_generation_config(
         GenerationConfig(
             max_new_tokens=args[0],
@@ -22,26 +22,20 @@ def update_generation_config(*args):
             top_k=int(args[3]),
             num_beams=args[4],
             do_sample=True,
-            length_penalty=-0.7
+            length_penalty=-0.7,
         )
     )
 
 
-class SettingsService:
-    @staticmethod
-    def change_model(model_choice):
-        pass
-
-    @staticmethod
-    def update_generation_config():
-        pass
+def change_model(model_choice: str) -> None:
+    service.change_model(model_choice)
 
 
-models = {
-    "meta-llama/Meta-Llama-3.1-8B (language)": "llama3_8b",
-    "meta-llama/Meta-Llama-3.1-8B-Instruct (language)": "llama3_8b_instruct",
-    "HuggingFaceM4/idefics2-8b-chatty (multimodal)": "idefics2_chat",
-}
+models = [
+    "meta-llama/Meta-Llama-3.1-8B",
+    "meta-llama/Meta-Llama-3.1-8B-Instruct",
+    "HuggingFaceM4/idefics2-8b-chatty",
+]
 
 
 @contextmanager
@@ -68,7 +62,7 @@ def chat_tab():
                     )
                     btn = gr.Button("Select")
                     btn.click(
-                        SettingsService.change_model, inputs=model_choice, outputs=None
+                        change_model, inputs=settings.CAUSAL_MODEL_NAME, outputs=None
                     )
                 gr.Markdown("# Generation config")
                 with gr.Column():

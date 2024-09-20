@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import huggingface_hub
+import torch
 from dynaconf import settings
 from gradio.utils import NamedString
 from loguru import logger
@@ -144,6 +145,12 @@ class Service:
     def update_generation_config(self, generation_config: GenerationConfig) -> None:
         self.generation_config = generation_config
         logger.info(f"Updated generation config: {self.generation_config.dict()}")
+
+    def change_model(self, model_name: str) -> None:
+        del self.causal_model
+        torch.cuda.empty_cache()
+        self.causal_model = CausalLMFactory.get_model(model_name)
+        logger.info(f"Model changed to: {model_name}")
 
 
 service = Service()

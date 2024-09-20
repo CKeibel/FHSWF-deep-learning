@@ -52,7 +52,7 @@ class Settings:
 
 def get_settings(model_id: str) -> HuggingFaceModelSettings:
     settings = Settings()
-    for model, setting in settings.models.itmes():
+    for model, setting in settings.models.items():
         if model == model_id:
             return setting
     raise ValueError(f"Settings for model_id '{model_id}' not found.")
