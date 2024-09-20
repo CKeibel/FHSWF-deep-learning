@@ -1,5 +1,4 @@
-from backend.causal_models.models import (CausalLMBase, LanguageModel,
-                                          MultimodalModel)
+from backend.causal_models.models import CausalLMBase, MultimodalModel
 from backend.causal_models.settings import get_settings
 
 language_models = {"llama3_8b": MultimodalModel, "llama3_8b_instruct": MultimodalModel}

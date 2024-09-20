@@ -18,10 +18,11 @@ class HuggingFaceModelSettings(CausalModelSettings):
 
 
 class Llama3SmallSettings(HuggingFaceModelSettings):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
     model_id: str = "meta-llama/Meta-Llama-3.1-8B"
     chat_template: str = "language_prompt.j2"
     architecture: PreTrainedModel = AutoModelForCausalLM
-    tokenizer: AutoTokenizer = AutoTokenizer
+    tokenizer: AutoTokenizer | AutoProcessor = AutoTokenizer
     multimodal: bool = False
 
 
@@ -29,7 +30,7 @@ class Llama3SmallInstruct(HuggingFaceModelSettings):
     model_id: str = "meta-llama/Meta-Llama-3.1-8B-Instruct"
     chat_template: str = "language_prompt.j2"
     architecture: PreTrainedModel = AutoModelForCausalLM
-    tokenizer: AutoTokenizer = AutoTokenizer
+    tokenizer: AutoTokenizer | AutoProcessor = AutoTokenizer
     multimodal: bool = False
 
 
@@ -37,7 +38,7 @@ class Idefics2Chat(HuggingFaceModelSettings):
     model_id: str = "HuggingFaceM4/idefics2-8b-chatty"
     chat_template: str = "multimodal_prompt.j2"
     architecture: PreTrainedModel = AutoModelForVision2Seq
-    tokenizer: AutoProcessor = AutoProcessor
+    tokenizer: AutoTokenizer | AutoProcessor = AutoProcessor
     multimodal: str = True
 
 
