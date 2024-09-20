@@ -56,14 +56,12 @@ def chat_tab():
                 gr.Markdown("# Model selection")
                 with gr.Column():
                     model_choice = gr.Dropdown(
-                        choices=list(models.keys()),  # Todo: set the choices (models)
-                        value=[],  # Todo: set the default value
+                        choices=models,
+                        value=settings.CAUSAL_MODEL_NAME,
                         label="Model",
                     )
                     btn = gr.Button("Select")
-                    btn.click(
-                        change_model, inputs=settings.CAUSAL_MODEL_NAME, outputs=None
-                    )
+                    btn.click(change_model, inputs=model_choice, outputs=None)
                 gr.Markdown("# Generation config")
                 with gr.Column():
                     new_tokens_slider = gr.Slider(

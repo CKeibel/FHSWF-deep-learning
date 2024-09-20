@@ -149,8 +149,9 @@ class Service:
     def change_model(self, model_name: str) -> None:
         del self.causal_model
         torch.cuda.empty_cache()
+        logger.info(f"Changing model to: {model_name}")
         self.causal_model = CausalLMFactory.get_model(model_name)
-        logger.info(f"Model changed to: {model_name}")
+        logger.info(f"Loading {model_name} complete!")
 
 
 service = Service()
