@@ -1,11 +1,13 @@
-from backend.causal_models.models import (CausalLMBase, LanguageModel,
-                                          MultimodalModel)
+from backend.causal_models.models import CausalLMBase, HuggingFaceModel
 from backend.causal_models.settings import get_settings
 
-language_models = {"llama3_8b": LanguageModel, "llama3_8b_instruct": LanguageModel}
+language_models = {
+    "llama3_8b": HuggingFaceModel,
+    "llama3_8b_instruct": HuggingFaceModel,
+}
 
 multimodal_models = {
-    "idefics2_chat": MultimodalModel,
+    "idefics2_chat": HuggingFaceModel,
 }
 
 
