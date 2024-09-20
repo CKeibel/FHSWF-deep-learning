@@ -1,12 +1,9 @@
 from abc import ABC, abstractmethod
 
-import matplotlib.pyplot as plt
 import torch
 from jinja2 import Template
 from loguru import logger
 from PIL import Image
-from transformers import (AutoModelForCausalLM, AutoModelForVision2Seq,
-                          AutoProcessor, AutoTokenizer)
 from transformers.generation.utils import GenerateOutput
 
 from backend.causal_models.settings import (CausalModelSettings,
