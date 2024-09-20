@@ -22,6 +22,7 @@ def update_generation_config(*args):
             top_k=int(args[3]),
             num_beams=args[4],
             do_sample=True,
+            length_penalty=-0.7
         )
     )
 

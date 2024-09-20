@@ -7,6 +7,7 @@ from loguru import logger
 from PIL import Image
 from transformers import (AutoModelForCausalLM, AutoModelForVision2Seq,
                           AutoProcessor, AutoTokenizer)
+from transformers.generation.utils import GenerateOutput
 
 from backend.causal_models.settings import (CausalModelSettings,
                                             HuggingFaceModelSettings)
@@ -26,7 +27,7 @@ class CausalLMBase(ABC):
         pass
 
 
-class MultimodalModel(CausalLMBase):
+class HuggingFaceModel(CausalLMBase):
     def __init__(self, settings: HuggingFaceModelSettings) -> None:
         self.settings = settings
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -48,7 +49,7 @@ class MultimodalModel(CausalLMBase):
                 text, images=images, return_tensors="pt"
             ).input_ids.to(self.device)
         else:
-            return self.processor(text, return_tensors="pt").input_ids.to(self.device)
+            return self.processor(text, return_tensors="pt")
 
     def _construct_prompt(
         self, question: str, search_results: list[SearchResult]
@@ -75,18 +76,34 @@ class MultimodalModel(CausalLMBase):
             }
         return self.template.render(messages=[context, user_message])
 
+    def _get_input_prompt_length(self, inputs: dict | torch.LongTensor) -> int:
+        if self.multimodal:
+            return len(inputs[0])
+        return len(inputs["input_ids"][0])
+
+    def _generate(
+        self, inputs: dict | torch.LongTensor, **kwargs
+    ) -> GenerateOutput | torch.LongTensor:
+        logger.debug(f"Starting generation with {kwargs}...")
+        if self.multimodal:
+            inputs = inputs.to(self.device)
+            return self.model.generate(inputs, **kwargs).to("cpu")
+
+        inputs = {k: v.to(self.device) for k, v in inputs.items()}
+        return self.model.generate(**inputs, **kwargs).to("cpu")
+
     @torch.no_grad()
     def generate(
         self, question: str, search_results: list[SearchResult], **kwargs
     ) -> str:
         prompt = self._construct_prompt(question, search_results)
         images = [result.image for result in search_results if result.image is not None]
-        inputs_ids = self._tokenize(prompt, images)
-        logger.debug(f"Starting generation with {kwargs}...")
-        outputs = self.model.generate(inputs_ids, **kwargs)
+        inputs = self._tokenize(prompt, images)
+        input_prompt_length = self._get_input_prompt_length(inputs)
+        outputs = self._generate(inputs, **kwargs)
         # decode only new tokens to string
         answer = self.processor.decode(
-            outputs[0][len(inputs_ids[0]) :], skip_special_tokens=True
+            outputs[0][input_prompt_length:], skip_special_tokens=True
         )
         torch.cuda.empty_cache()
         return answer

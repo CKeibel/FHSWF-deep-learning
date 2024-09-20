@@ -41,3 +41,4 @@ class GenerationConfig(BaseModel):
     temperature: float
     num_beams: int
     do_sample: bool
+    length_penalty: float

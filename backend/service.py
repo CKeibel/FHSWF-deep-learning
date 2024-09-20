@@ -35,6 +35,7 @@ class Service:
             top_k=85,
             num_beams=1,
             do_sample=True,
+            length_penalty=-0.7,
         )
 
     def insert_files(self, files: list[NamedString]) -> None:
