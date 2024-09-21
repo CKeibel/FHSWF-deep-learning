@@ -11,8 +11,10 @@ from backend.causal_models.factory import CausalLMFactory
 from backend.enums import FileExtensions
 from backend.file_handling.chunker import TextChunkerFactory
 from backend.file_handling.extractors import PdfExtractor
-from backend.retriever.factory import DenseRetrieverFactory
-from backend.schemas import ExtractedContent, GenerationConfig, StoreEntry
+from backend.retriever.factory import (DenseRetrieverFactory,
+                                       SparseRetrieverFactory)
+from backend.schemas import (ExtractedContent, GenerationConfig, SearchResult,
+                             StoreEntry)
 from backend.storage.factory import VectorStoreFactory
 from backend.storage.store_base import VectorStoreBase
 
@@ -38,6 +40,7 @@ class Service:
             do_sample=True,
             length_penalty=-0.7,
         )
+        self.sparse_retriever = SparseRetrieverFactory.get_model("bm25")
 
     def insert_files(self, files: list[NamedString]) -> None:
         for i, path in enumerate(files):
@@ -73,6 +76,7 @@ class Service:
                 # Insert texts
                 if len(chunked_texts) > 0:
                     dense_text_vectors = self.dense_retriever.vectorize(chunked_texts)
+                    # Dense embeddings
                     self.vector_store.insert(
                         StoreEntry(
                             type="text",
@@ -81,29 +85,31 @@ class Service:
                             vector=dense_text_vectors,
                         )
                     )
+                    # Sparse embeddings
+                    self.sparse_retriever.add_documents(chunked_texts)
+
                 # Images
-                if (
-                    len(extraced_content.images) > 0
-                    and self.dense_retriever.is_multimodal()
-                ):
-                    dense_image_vectors = self.dense_retriever.vectorize(
-                        extraced_content.images
-                    )
+                if len(extraced_content.images) > 0:
+
                     # Image embeddings
-                    if dense_image_vectors is not None:
-                        self.vector_store.insert(
-                            StoreEntry(
-                                type="image",
-                                document_name=file_path.name,
-                                content=extraced_content.images,
-                                vector=dense_image_vectors,
-                            )
+                    if self.dense_retriever.is_multimodal():
+                        dense_image_vectors = self.dense_retriever.vectorize(
+                            extraced_content.images
                         )
+                        if dense_image_vectors is not None:
+                            self.vector_store.insert(
+                                StoreEntry(
+                                    type="image",
+                                    document_name=file_path.name,
+                                    content=extraced_content.images,
+                                    vector=dense_image_vectors,
+                                )
+                            )
+
+                    # Caption embeddings
                     dense_caption_vectors = self.dense_retriever.vectorize(
                         [img.caption for img in extraced_content.images]
                     )
-
-                    # Caption embeddings
                     if dense_caption_vectors is not None:
                         self.vector_store.insert(
                             StoreEntry(
@@ -113,15 +119,67 @@ class Service:
                                 vector=dense_caption_vectors,
                             )
                         )
+        logger.info("Finished processing all documents.")
 
     def inference(self, query: str) -> str:
         logger.info(f"Got following user query: {query}")
-        query_vector = self.dense_retriever.vectorize([query])
         logger.info(f"Trying to find the {self.retrieve_n} best matching documents...")
-        result = self.vector_store.query(query_vector, self.retrieve_n)
+
+        # Dense search
+        query_vector = self.dense_retriever.vectorize([query])
+        dense_result = self.vector_store.query(query_vector, self.retrieve_n)
+        # Sparse search
+        sparse_results = self.sparse_retriever.search(query)
+
+        combined_results = self.reciprocal_rank_fusion(dense_result, sparse_results)
+
         return self.causal_model.generate(
-            query, result, **self.generation_config.dict()
+            query, combined_results, **self.generation_config.dict()
         )
+
+    # Reciprocal Rank Fusion
+    def reciprocal_rank_fusion(
+        self, dense_results: list[SearchResult], sparse_results: list[str], k: int = 60
+    ) -> list[SearchResult]:
+        # Store text to image mapping
+        image_mapping = dict()
+        dense_texts: list[str] = list()
+        for result in dense_results:
+            if result.image:
+                image_mapping[result.text] = result.image
+            dense_texts.append(result.text)
+
+        # Combine found docs
+        all_docs = set(sparse_results + dense_texts)
+
+        # Reciprocal Rank Fusion
+        scores = dict()
+        for doc in all_docs:
+            score = 0
+            # Calculate score contribution from sparse results
+            if doc in sparse_results:
+                rank = sparse_results.index(doc) + 1
+            else:
+                rank = len(sparse_results) + 1
+            score += 1 / (k + rank)
+
+            # Calculate score contribution from dense results
+            if doc in dense_results:
+                rank = dense_results.index(doc) + 1
+            else:
+                rank = len(dense_results) + 1
+            score += 1 / (k + rank)
+
+            scores[doc] = score
+
+        # Rank results
+        ranked_documents = sorted(scores.items(), key=lambda x: x[1], reverse=True)[
+            : self.retrieve_n
+        ]
+        return [
+            SearchResult(text=doc[0], image=image_mapping.get(doc[0]))
+            for doc in ranked_documents
+        ]
 
     @staticmethod
     def hf_login(secret: str | None = None) -> None:

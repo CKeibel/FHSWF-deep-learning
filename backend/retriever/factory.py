@@ -1,7 +1,7 @@
 from backend.retriever.dense_retriever import (BertRetriever, ClipRetriever,
                                                DenseRetrieverBase,
                                                JinaClipRetriever)
-from backend.retriever.sparse_retriever import SparseRetrieverBase
+from backend.retriever.sparse_retriever import BM25, SparseRetrieverBase
 
 
 class DenseRetrieverFactory:
@@ -17,8 +17,16 @@ class DenseRetrieverFactory:
         if retriever_class:
             return retriever_class(model_id)
         else:
-            raise ValueError(f"Model {model_id} not found")
+            raise ValueError(f"Dense retriever {model_id} not found")
 
 
 class SparseRetrieverFactory:
-    pass
+    model_types = {"bm25": BM25}
+
+    @staticmethod
+    def get_model(model_id: str) -> SparseRetrieverBase:
+        sparse_retriever = SparseRetrieverFactory.model_types.get(model_id)()
+        if sparse_retriever:
+            return sparse_retriever
+        else:
+            raise ValueError(f"Sparse retriever {model_id} not found")

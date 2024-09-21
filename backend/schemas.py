@@ -30,7 +30,7 @@ class StoreEntry(BaseModel):
 class SearchResult(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     text: str
-    document_name: str
+    document_name: str | None = None
     image: Image | None = None
 
 
