@@ -3,6 +3,7 @@
 .vscode
 .venv
 .python-version
+*.ipynb_checkpoints
 
 notebooks/files/
 *database
