@@ -35,6 +35,19 @@ class PdfExtractor(ExtractorBase):
                 .decode("utf-8", errors="replace")
                 .replace("\n", " ")
             )
+            # Filter out references
+            reference_keywords = [
+                "literaturverzeichnis",
+                "referenzen",
+                "bibliografie",
+                "references",
+                "bibliography",
+                "appendix",
+                "anhang",
+            ]
+            if any(keyword in text.lower() for keyword in reference_keywords):
+                break
+
             text += page_text
 
             # extracting images
@@ -61,6 +74,7 @@ class PdfExtractor(ExtractorBase):
                         document_name=file.name,
                     )
                 )
+        document.close()
 
         logger.info("Finished content extraction.")
         return ExtractedContent(document_name=file.name, full_text=text, images=images)
