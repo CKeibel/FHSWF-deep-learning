@@ -13,10 +13,10 @@ from backend.storage.store_base import VectorStoreBase
 
 class ChromaDB(VectorStoreBase):
     def __init__(self) -> None:
-        self.database_path = Path(settings.CHROMA_DB_PATH)
+        self.database_path = Path(settings.DATABASE_PATH)
         self.client = chromadb.PersistentClient(path=str(self.database_path))
         self.store = self.client.get_or_create_collection(
-            name=settings.CHROMA_COLLECTION_NAME
+            name=f"{settings.DATABASE_NAME}_vectors"
         )
 
     def query(self, query_vector: np.ndarray, k=10) -> list[SearchResult]:
@@ -88,7 +88,11 @@ class ChromaDB(VectorStoreBase):
         pass
 
     def _save_image_to_disk(self, img: ExtractedImage) -> str:
-        image_root_path = self.database_path / Path(f"images/{img.document_name}")
+        image_root_path = (
+            self.database_path
+            / Path(settings.DATABASE_NAME)
+            / Path(f"images/{img.document_name}")
+        )
         image_root_path.mkdir(parents=True, exist_ok=True)
         image_path = image_root_path / f"{img.id}.png"
         img.image.save(image_path)

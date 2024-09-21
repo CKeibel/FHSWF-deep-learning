@@ -33,7 +33,10 @@ class HuggingFaceModel(CausalLMBase):
         )
         self.processor = self.settings.tokenizer.from_pretrained(self.settings.model_id)
         self.model = self.settings.architecture.from_pretrained(
-            self.settings.model_id, device_map=self.device, torch_dtype=torch.float16
+            self.settings.model_id,
+            device_map=self.device,
+            torch_dtype=torch.float16,
+            _attn_implementation="eager",
         )
         self.template: Template = PromptManager.get_prompt_template(
             self.settings.chat_template

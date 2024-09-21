@@ -18,6 +18,6 @@ hybrid = true
 # lancedb
 embbeding_dim = 512
 
-# chromadb
-chroma_db_path = "database"
-chroma_collection_name = "my_store"
+# database
+database_path = "database"
+database_name = "my_store"
