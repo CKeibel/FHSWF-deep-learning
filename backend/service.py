@@ -129,7 +129,7 @@ class Service:
         query_vector = self.dense_retriever.vectorize([query])
         dense_result = self.vector_store.query(query_vector, self.retrieve_n)
         # Sparse search
-        sparse_results = self.sparse_retriever.search(query)
+        sparse_results = self.sparse_retriever.search(query, self.retrieve_n)
 
         combined_results = self.reciprocal_rank_fusion(dense_result, sparse_results)
 
