@@ -37,10 +37,16 @@ class HuggingFaceModel(CausalLMBase):
             device_map=self.device,
             torch_dtype=torch.float16,
         )
-        self.template: Template = PromptManager.get_prompt_template(
-            self.settings.chat_template
-        )
+        try:
+            self.template: Template = PromptManager.get_prompt_template(
+                self.settings.chat_template
+            )
+        except:
+            self.template = None
         self.multimodal = self.settings.multimodal
+
+    def set_prompt_template(self, template: Template) -> None:
+        self.template = template
 
     def _tokenize(self, text: str, images: list[Image.Image]) -> torch.Tensor:
         if len(images) > 0 and self.multimodal:
@@ -71,15 +77,17 @@ class HuggingFaceModel(CausalLMBase):
 
             user_message = {
                 "role": "user",
-                "content": [{"type": "text", "content": [question]}],
+                "content": [{"type": "text", "text": question}],
             }
         return self.template.render(messages=[context, user_message])
 
     def _get_input_prompt_length(self, inputs: dict | torch.LongTensor) -> int:
+        length = 0
         try:
-            return len(inputs["input_ids"][0])
-        except KeyError:
-            return len(inputs[0])
+            length = len(inputs["input_ids"][0])
+        except (KeyError, IndexError):
+            length = len(inputs[0])
+        return length
 
     def _generate(
         self, inputs: dict | torch.LongTensor, **kwargs

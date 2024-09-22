@@ -54,6 +54,7 @@ class Settings:
     models: dict[str, CausalModelSettings] = {
         "meta-llama/Meta-Llama-3.1-8B": Llama3SmallSettings(),
         "meta-llama/Meta-Llama-3.1-8B-Instruct": Llama3SmallInstruct(),
+        "HuggingFaceH4/zephyr-7b-beta": ZephyrBeta(),
         "HuggingFaceM4/idefics2-8b-chatty": Idefics2Chat(),
     }
 
