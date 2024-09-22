@@ -34,6 +34,7 @@ def change_model(model_choice: str) -> None:
 models = [
     "meta-llama/Meta-Llama-3.1-8B",
     "meta-llama/Meta-Llama-3.1-8B-Instruct",
+    "HuggingFaceH4/zephyr-7b-beta",
     "HuggingFaceM4/idefics2-8b-chatty",
 ]
 

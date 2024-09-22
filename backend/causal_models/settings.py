@@ -34,6 +34,14 @@ class Llama3SmallInstruct(HuggingFaceModelSettings):
     multimodal: bool = False
 
 
+class ZephyrBeta(HuggingFaceModelSettings):
+    model_id: str = "HuggingFaceH4/zephyr-7b-beta"
+    chat_template: str = "language_prompt.j2"
+    architecture: PreTrainedModel = AutoModelForCausalLM
+    tokenizer: AutoTokenizer | AutoProcessor = AutoTokenizer
+    multimodal: bool = False
+
+
 class Idefics2Chat(HuggingFaceModelSettings):
     model_id: str = "HuggingFaceM4/idefics2-8b-chatty"
     chat_template: str = "multimodal_prompt.j2"

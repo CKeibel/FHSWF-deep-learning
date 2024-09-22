@@ -1,14 +1,14 @@
 [default]
 # chunking
-chunker = "semantic"
-chunk_size = 450
-chunk_overlap = 0
+chunker = "recursive"
+chunk_size = 1500
+chunk_overlap = 200
 
 # dense retriever
 dense_retriever_name = "sentence-transformers/all-MiniLM-L6-v2"
 
 # causal model
-causal_model_name = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+causal_model_name = "HuggingFaceM4/idefics2-8b-chatty"
 
 # vector store
 vector_store = "chromadb"

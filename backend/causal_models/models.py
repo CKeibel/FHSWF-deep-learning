@@ -36,7 +36,6 @@ class HuggingFaceModel(CausalLMBase):
             self.settings.model_id,
             device_map=self.device,
             torch_dtype=torch.float16,
-            _attn_implementation="eager",
         )
         self.template: Template = PromptManager.get_prompt_template(
             self.settings.chat_template
@@ -77,20 +76,22 @@ class HuggingFaceModel(CausalLMBase):
         return self.template.render(messages=[context, user_message])
 
     def _get_input_prompt_length(self, inputs: dict | torch.LongTensor) -> int:
-        if self.multimodal:
+        try:
+            return len(inputs["input_ids"][0])
+        except KeyError:
             return len(inputs[0])
-        return len(inputs["input_ids"][0])
 
     def _generate(
         self, inputs: dict | torch.LongTensor, **kwargs
     ) -> GenerateOutput | torch.LongTensor:
         logger.debug(f"Starting generation with {kwargs}...")
-        if self.multimodal:
+        torch.cuda.empty_cache()
+        try:
+            inputs = {k: v.to(self.device) for k, v in inputs.items()}
+            return self.model.generate(**inputs, **kwargs).to("cpu")
+        except:
             inputs = inputs.to(self.device)
             return self.model.generate(inputs, **kwargs).to("cpu")
-
-        inputs = {k: v.to(self.device) for k, v in inputs.items()}
-        return self.model.generate(**inputs, **kwargs).to("cpu")
 
     @torch.no_grad()
     def generate(

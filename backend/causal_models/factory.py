@@ -8,6 +8,7 @@ class CausalLMFactory:
     model_types = {
         "meta-llama/Meta-Llama-3.1-8B": HuggingFaceModel,
         "meta-llama/Meta-Llama-3.1-8B-Instruct": HuggingFaceModel,
+        "HuggingFaceH4/zephyr-7b-beta": HuggingFaceModel,
         "HuggingFaceM4/idefics2-8b-chatty": HuggingFaceModel,
     }
 
