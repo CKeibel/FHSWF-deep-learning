@@ -1,0 +1,29 @@
+,model,question,answer
+0,gpt-4o-mini,What was the trend or progression of Arctic sea ice cover in the period between 1991-2020?,"The trend of Arctic sea ice cover between 1991 and 2020 showed a significant decrease. During this period, the Arctic sea-ice area was influenced by human activities, which are likely the main driver of the decline. The sea-ice extent was on average around 1 million km² below the 1991–2020 average during the years 2019–2023. Overall, the data indicates that Arctic sea ice cover reached its lowest levels since at least 1850, with projections suggesting that it could become practically ice-free at its summer minimum at least once before 2050."
+1,gpt-4o-mini,Which AI Model did perform best in forecasting certain weather situations?,I cannot answer this based on the provided information.
+2,gpt-4o-mini,How many countries build MHEWS in the year 2020?,"In the year 2020, 98 countries reported the existence of Multi-Hazard Early Warning Systems (MHEWS)."
+3,gpt-4o-mini,What are the estimated ozone exposure levels in South Asia? (Provide specific numbers if possible.),"In South Asia, the estimated ozone exposure levels in 2020 were among the highest globally, with countries like Nepal, India, Bangladesh, and Pakistan experiencing significant levels. The specific average ozone exposures in this region were not detailed in the provided context, but it was noted that these countries had high average ozone exposures, contributing to an increase of more than 10% in ambient ozone levels over the last decade. 
+
+If you need more precise numbers, please refer to specific data sources or studies that provide detailed ozone concentration levels for these countries."
+4,gpt-4o-mini,"Where were the most Meteorological event recorded? (Meteorological event: storm, winter storm,severe weather, hail, tornado, local storm) Give numbers if possible.","The most meteorological events were recorded in North America, where numerous devastating storms and hurricanes accounted for the majority of natural disaster damage, amounting to more than US$ 502 billion. Additionally, Asia was the continent most often hit by natural disasters, with more than 32% of all hydrometeorological disasters reported there, resulting in 215,000 victims, which is 49% of total deaths caused by hydrometeorological disasters worldwide. 
+
+While specific numbers for meteorological events in North America are not provided in the context, it is clear that this continent experienced significant impacts from such events during the decade 2001–2010."
+5,gpt-4o-mini,Around what time of year is the ozone hole at its largest?,The ozone hole reaches its maximum size around late September or early October.
+6,gpt-4o-mini,What was the last measured sea level in mm approximately?,The last measured sea level in the provided graph is approximately 200 mm.
+7,gpt-4o-mini,In which year was the long-term average of the global combined surface air temperature over land and sea crossed?,"The long-term average of the global combined surface air temperature over land and sea, indicated as 14.0°C, was crossed in the decade 2001–2010. Specifically, the average temperature for this decade was estimated at 14.47°C, which is above the long-term average."
+8,HuggingFaceM4/idefics2-8b-chatty,What was the trend or progression of Arctic sea ice cover in the period between 1991-2020?,"
+In the period between 1991-2020, Arctic sea ice cover experienced a decrease."
+9,HuggingFaceM4/idefics2-8b-chatty,Which AI Model did perform best in forecasting certain weather situations?,"
+Huawei's Pangu-Weather (Bi et al., 2023) performed best in forecasting certain weather situations."
+10,HuggingFaceM4/idefics2-8b-chatty,How many countries build MHEWS in the year 2020?,"
+In the year 2020, 88 countries have built MHEWS."
+11,HuggingFaceM4/idefics2-8b-chatty,What are the estimated ozone exposure levels in South Asia? (Provide specific numbers if possible.),"
+In South Asia, the estimated ozone exposure levels range from 11.4 ppb to 67.6 ppb."
+12,HuggingFaceM4/idefics2-8b-chatty,"Where were the most Meteorological event recorded? (Meteorological event: storm, winter storm,severe weather, hail, tornado, local storm) Give numbers if possible.","
+North America recorded the most Meteorological event."
+13,HuggingFaceM4/idefics2-8b-chatty,Around what time of year is the ozone hole at its largest?,"
+The ozone hole is at its largest around late September or early October, during the southern hemisphere spring."
+14,HuggingFaceM4/idefics2-8b-chatty,What was the last measured sea level in mm approximately?,"
+The last measured sea level in mm was approximately 200 mm."
+15,HuggingFaceM4/idefics2-8b-chatty,In which year was the long-term average of the global combined surface air temperature over land and sea crossed?,"
+The long-term average of the global combined surface air temperature over land and sea was crossed in the year 2001."
